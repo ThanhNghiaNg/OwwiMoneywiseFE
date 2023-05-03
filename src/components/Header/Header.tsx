@@ -26,8 +26,8 @@ interface Props {
 
 const drawerWidth = 240;
 const navItems = [
-  { name: "Dashboard", href: "/dashboard" },
-  { name: "Transaction List", href: "/transactions" },
+  { name: "Home", href: "/" },
+  { name: "Transaction Tracker", href: "/transaction-tracker" },
   { name: "Login", href: "/login" },
   { name: "Logout", href: "/login" },
   { name: "Profile", href: "/profile" },
@@ -65,7 +65,6 @@ export default function Header(props: Props) {
 
   return (
     <Box sx={{ display: "flex" }}>
-      <CssBaseline />
       <AppBar component="nav">
         <Toolbar>
           <IconButton
