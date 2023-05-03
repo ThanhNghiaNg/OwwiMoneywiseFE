@@ -15,6 +15,7 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import AdbIcon from "@mui/icons-material/Adb";
 import { useNavigate } from "react-router-dom";
+import { HREFS } from "../../constants";
 
 interface Props {
   /**
@@ -26,11 +27,12 @@ interface Props {
 
 const drawerWidth = 240;
 const navItems = [
-  { name: "Home", href: "/" },
-  { name: "Transaction Tracker", href: "/transaction-tracker" },
-  { name: "Login", href: "/login" },
-  { name: "Logout", href: "/login" },
-  { name: "Profile", href: "/profile" },
+  { name: "Home", href: HREFS.home },
+  { name: "Dashboard", href: HREFS.dashboard },
+  { name: "Transactions", href: HREFS.transactions },
+  { name: "Login", href: HREFS.login },
+  { name: "Logout", href: HREFS.login },
+  { name: "Profile", href: HREFS.profile },
 ];
 
 export default function Header(props: Props) {
@@ -45,7 +47,7 @@ export default function Header(props: Props) {
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: "center" }}>
       <Typography variant="h6" sx={{ my: 2 }}>
-        MUI
+        OWWI
       </Typography>
       <Divider />
       <List>

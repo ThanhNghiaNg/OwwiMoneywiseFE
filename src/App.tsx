@@ -1,6 +1,8 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import MainLayout from "./Layouts/MainLayout";
-import TransactionTracker from "./pages/TransactionTracker";
+import Dashboard from "./pages/Dashboard";
+import { HREFS } from "./constants";
+import TransactionList from "./components/TransactionList/TransactionList";
 
 function App() {
   return (
@@ -8,14 +10,9 @@ function App() {
       <BrowserRouter>
         <MainLayout>
           <Routes>
-          <Route
-              path="/"
-              element={<TransactionTracker />}
-            />
-            <Route
-              path="/transaction-tracker"
-              element={<TransactionTracker />}
-            />
+            <Route path="/" element={<Dashboard />} />
+            <Route path={HREFS.dashboard} element={<Dashboard />} />
+            <Route path={HREFS.transactions} element={<TransactionList />} />
           </Routes>
         </MainLayout>
       </BrowserRouter>
