@@ -1,6 +1,6 @@
 import { Dialog, DialogTitle } from "@mui/material";
 import React, { ReactNode, forwardRef, useImperativeHandle } from "react";
-import { IDialogBaseRef } from "../../types/dialog";
+import { IDialogBaseRef } from "../../types/dialog.type";
 
 type Props = { children: ReactNode; title: string };
 const FormDialog = forwardRef(

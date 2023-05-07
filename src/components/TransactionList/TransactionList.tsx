@@ -1,13 +1,15 @@
 import React, { useEffect, useRef } from "react";
 import { TransactionEntity } from "../../types/entities/transaction.entity";
 import CustomTable from "../CustomTable/CustomTable";
-import { HOST_URL } from "../../constants";
 import { Box, Button } from "@mui/material";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import ModeEditOutlineIcon from "@mui/icons-material/ModeEditOutline";
 import TransactionForm from "../TransactionForm/TransactionForm";
-import { IDialogBaseRef } from "../../types/dialog";
+import { IDialogBaseRef } from "../../types/dialog.type";
 import FormDialog from "../CommonDialog/FormDialog";
 import CustomCategoryForm from "../Category/CustomCategoryForm";
 import CustomPartnerForm from "../Partner/CustomPartnerForm";
+import { BASE_URL } from "../../constants";
 
 export default function TransactionList() {
   const transactionFormRef = useRef<IDialogBaseRef>(null);
@@ -16,7 +18,7 @@ export default function TransactionList() {
 
   useEffect(() => {
     const getTransactionsList = async () => {
-      const respone = await fetch(`${HOST_URL}/transaction/all`);
+      const respone = await fetch(`${BASE_URL}/transaction/all`);
       const data = await respone.json();
       console.log(data);
     };
@@ -71,8 +73,12 @@ export default function TransactionList() {
           type: "button",
           value: (
             <>
-              <Button>Edit</Button>
-              <Button>Delete</Button>
+              <Button>
+                <ModeEditOutlineIcon />
+              </Button>
+              <Button color="error">
+                <DeleteOutlineIcon />
+              </Button>
             </>
           ),
         },
@@ -91,21 +97,21 @@ export default function TransactionList() {
 
   return (
     <div className="mt-10">
-      <FormDialog title="New transaction" ref={transactionFormRef}>
+      <FormDialog title="New Transaction" ref={transactionFormRef}>
         <TransactionForm
           onCloseForm={() => {
             transactionFormRef.current?.hide();
           }}
         />
       </FormDialog>
-      <FormDialog title="New category" ref={categoryFormRef}>
+      <FormDialog title="New Category" ref={categoryFormRef}>
         <CustomCategoryForm
           onCloseForm={() => {
             categoryFormRef.current?.hide();
           }}
         />
       </FormDialog>
-      <FormDialog title="New transaction" ref={partnerFormRef}>
+      <FormDialog title="New Partner" ref={partnerFormRef}>
         <CustomPartnerForm
           onCloseForm={() => {
             partnerFormRef.current?.hide();

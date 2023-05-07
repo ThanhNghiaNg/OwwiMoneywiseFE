@@ -11,6 +11,8 @@ import {
   TextField,
 } from "@mui/material";
 import { SelectChangeEvent } from "@mui/material/Select";
+import useHttp from "../../hooks/useHttp";
+import { BASE_URL } from "../../constants";
 
 type Props = { onCloseForm: () => void };
 
@@ -22,10 +24,14 @@ const CustomCategoryForm = (props: Props) => {
   const [description, setDescription] = React.useState("");
   const [date, setDate] = React.useState(new Date().toISOString().slice(0, 10));
 
+  const { sendRequest, error } = useHttp();
+
   const handleClose = props.onCloseForm;
 
   const onSubmit = () => {
-    handleClose();
+    sendRequest({ url: `${BASE_URL}/category/create`, method: "POST" }, () => {
+      handleClose();
+    });
   };
 
   return (
@@ -58,6 +64,7 @@ const CustomCategoryForm = (props: Props) => {
             </Select>
           </FormControl>
         </div>
+        {error && <p className="text-red-600">{error}</p>}
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>Cancel</Button>
