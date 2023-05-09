@@ -17,7 +17,7 @@ import useHttp from "../../hooks/useHttp";
 import { BASE_URL } from "../../constants";
 import { IType } from "../Category/CustomCategoryForm";
 
-type Props = { onCloseForm: () => void };
+type Props = { onCloseForm: () => void; onRefresh?: () => void };
 
 export interface ICategory {
   _id: string;
@@ -40,11 +40,31 @@ const TransactionForm = (props: Props) => {
   const { sendRequest: getCategories } = useHttp();
   const { sendRequest: getPartners } = useHttp();
   const { sendRequest: getTypes } = useHttp();
+  const { sendRequest: createTransactions } = useHttp();
 
   const handleClose = props.onCloseForm;
 
   const onSubmit = () => {
-    handleClose();
+    const data = {
+      type,
+      partner,
+      category,
+      amount,
+      description,
+      date,
+      isFinished,
+    };
+    createTransactions(
+      {
+        url: `${BASE_URL}/transaction/create`,
+        body: JSON.stringify(data),
+        method: "POST",
+      },
+      (data) => {
+        handleClose();
+        props.onRefresh?.();
+      }
+    );
   };
 
   React.useEffect(() => {

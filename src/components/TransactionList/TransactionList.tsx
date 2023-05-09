@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { TransactionEntity } from "../../types/entities/transaction.entity";
 import CustomTable from "../CustomTable/CustomTable";
 import { Box, Button } from "@mui/material";
@@ -10,90 +10,70 @@ import FormDialog from "../CommonDialog/FormDialog";
 import CustomCategoryForm from "../Category/CustomCategoryForm";
 import CustomPartnerForm from "../Partner/CustomPartnerForm";
 import { BASE_URL } from "../../constants";
+import useHttp from "../../hooks/useHttp";
 
 export default function TransactionList() {
+  const [transactionList, setTransactionList] = useState([]);
+  const [reload, setReload] = useState(false);
+
   const transactionFormRef = useRef<IDialogBaseRef>(null);
   const categoryFormRef = useRef<IDialogBaseRef>(null);
   const partnerFormRef = useRef<IDialogBaseRef>(null);
 
-  useEffect(() => {
-    const getTransactionsList = async () => {
-      const respone = await fetch(`${BASE_URL}/transaction/all`);
-      const data = await respone.json();
-      console.log(data);
-    };
-    getTransactionsList();
-  }, []);
-  const data = [
-    {
-      id: "00001",
-      type: "income",
-      partner: "Mom",
-      category: "weekly",
-      amount: 200000,
-      description: "",
-      date: "",
-    },
-    {
-      id: "00002",
-      type: "income",
-      partner: "Mom",
-      category: "weekly",
-      amount: 200000,
-      description: "",
-      date: "",
-    },
-    {
-      id: "00003",
-      type: "income",
-      partner: "Mom",
-      category: "weekly",
-      amount: 200000,
-      description: "",
-      date: "",
-    },
-    {
-      id: "00004",
-      type: "income",
-      partner: "Mom",
-      category: "weekly",
-      amount: 200000,
-      description: "",
-      date: "",
-    },
-  ];
-  const dataHandled = data.map((item) =>
-    Object.values(item)
-      .map((value) => ({
-        type: "string",
-        value: String(value),
-      }))
-      .concat([
-        {
-          type: "button",
-          value: (
-            <>
-              <Button>
-                <ModeEditOutlineIcon />
-              </Button>
-              <Button color="error">
-                <DeleteOutlineIcon />
-              </Button>
-            </>
-          ),
-        },
-      ])
-  );
+  const { sendRequest: getTransactionsList } = useHttp();
+
+  const toggleReload = () => {
+    setReload((prev) => !prev);
+  };
+
+  const dataHandled = transactionList
+    .map((item) => ({
+      ...item,
+      partner: item.partner.name,
+      category: item.category.name,
+      type: item.type.name,
+      date: new Date(item.date).toLocaleDateString(),
+    }))
+    .map((item) =>
+      Object.values(item)
+        .map((value) => ({
+          type: "string",
+          value: String(value),
+        }))
+        .concat([
+          {
+            type: "button",
+            value: (
+              <>
+                <Button>
+                  <ModeEditOutlineIcon />
+                </Button>
+                <Button color="error">
+                  <DeleteOutlineIcon />
+                </Button>
+              </>
+            ),
+          },
+        ])
+    );
+
   const columns = [
     "ID",
     "Type",
-    "Partner",
     "Category",
+    "Partner",
     "Amount",
     "Description",
+    "Done",
     "Date",
     "Actions",
   ];
+
+  useEffect(() => {
+    getTransactionsList({ url: `${BASE_URL}/transaction/all` }, (data) => {
+      setTransactionList(data);
+    });
+  }, [reload]);
 
   return (
     <div className="mt-10">
@@ -101,6 +81,9 @@ export default function TransactionList() {
         <TransactionForm
           onCloseForm={() => {
             transactionFormRef.current?.hide();
+          }}
+          onRefresh={() => {
+            toggleReload();
           }}
         />
       </FormDialog>
