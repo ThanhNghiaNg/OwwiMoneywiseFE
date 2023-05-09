@@ -1,6 +1,6 @@
 export type HookConfig = {
     url: RequestInfo | URL;
-    method: string;
+    method?: string;
     headers?: HeadersInit;
     body?: BodyInit;
 }

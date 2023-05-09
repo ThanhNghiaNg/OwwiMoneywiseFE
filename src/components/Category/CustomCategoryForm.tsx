@@ -16,23 +16,39 @@ import { BASE_URL } from "../../constants";
 
 type Props = { onCloseForm: () => void };
 
+export interface IType {
+  _id: string;
+  name: string;
+}
+
 const CustomCategoryForm = (props: Props) => {
   const [name, setName] = React.useState("");
   const [type, setType] = React.useState("");
-  const [category, setCategory] = React.useState("");
-  const [amount, setAmount] = React.useState<string | number>("");
-  const [description, setDescription] = React.useState("");
-  const [date, setDate] = React.useState(new Date().toISOString().slice(0, 10));
+  const [fetchedTypes, setFetchedTypes] = React.useState([]);
 
   const { sendRequest, error } = useHttp();
+  const { sendRequest: getTypes, error: getTypesErr } = useHttp();
 
   const handleClose = props.onCloseForm;
 
   const onSubmit = () => {
-    sendRequest({ url: `${BASE_URL}/category/create`, method: "POST" }, () => {
-      handleClose();
-    });
+    sendRequest(
+      {
+        url: `${BASE_URL}/category/create`,
+        method: "POST",
+        body: JSON.stringify({ name, type }),
+      },
+      () => {
+        handleClose();
+      }
+    );
   };
+
+  React.useEffect(() => {
+    getTypes({ url: `${BASE_URL}/user/type/all` }, (data) => {
+      setFetchedTypes(data);
+    });
+  }, []);
 
   return (
     <div>
@@ -59,8 +75,11 @@ const CustomCategoryForm = (props: Props) => {
                 setType(event.target.value as string);
               }}
             >
-              <MenuItem value={"salary"}>Salary</MenuItem>
-              <MenuItem value={"parking"}>Parking</MenuItem>
+              {fetchedTypes.map((type: IType) => {
+                return (
+                  <MenuItem value={type._id}>{type.name}</MenuItem>
+                );
+              })}
             </Select>
           </FormControl>
         </div>

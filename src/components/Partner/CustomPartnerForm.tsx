@@ -11,19 +11,41 @@ import {
   TextField,
 } from "@mui/material";
 import { SelectChangeEvent } from "@mui/material/Select";
+import { IType } from "../Category/CustomCategoryForm";
+import { BASE_URL } from "../../constants";
+import useHttp from "../../hooks/useHttp";
 
 type Props = { onCloseForm: () => void };
 
 const CustomPartnerForm = (props: Props) => {
+  const handleClose = props.onCloseForm;
   const [name, setName] = React.useState("");
   const [type, setType] = React.useState("");
+  const [fetchedTypes, setFetchedTypes] = React.useState([]);
   const [address, setAddress] = React.useState("");
 
-  const handleClose = props.onCloseForm;
+  const { sendRequest: getTypes } = useHttp();
+  const { sendRequest: createPartner } = useHttp();
 
   const onSubmit = () => {
-    handleClose();
+    console.log("Create Partner");
+    createPartner(
+      {
+        url: `${BASE_URL}/partner/create`,
+        body: JSON.stringify({ name, type, address }),
+        method: "POST",
+      },
+      (data) => {
+        handleClose();
+      }
+    );
   };
+
+  React.useEffect(() => {
+    getTypes({ url: `${BASE_URL}/user/type/all` }, (data) => {
+      setFetchedTypes(data);
+    });
+  }, []);
 
   return (
     <div>
@@ -32,7 +54,7 @@ const CustomPartnerForm = (props: Props) => {
           <FormControl fullWidth>
             <TextField
               id="name"
-              label="Caregory Name"
+              label="Partner Name"
               value={name}
               onChange={(event) => {
                 setName(event.target.value);
@@ -50,8 +72,9 @@ const CustomPartnerForm = (props: Props) => {
                 setType(event.target.value as string);
               }}
             >
-              <MenuItem value={"salary"}>Salary</MenuItem>
-              <MenuItem value={"parking"}>Parking</MenuItem>
+              {fetchedTypes.map((type: IType) => {
+                return <MenuItem value={type._id}>{type.name}</MenuItem>;
+              })}
             </Select>
           </FormControl>
           <FormControl fullWidth>

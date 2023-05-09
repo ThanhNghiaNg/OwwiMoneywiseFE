@@ -13,17 +13,33 @@ import {
   TextField,
 } from "@mui/material";
 import { SelectChangeEvent } from "@mui/material/Select";
+import useHttp from "../../hooks/useHttp";
+import { BASE_URL } from "../../constants";
+import { IType } from "../Category/CustomCategoryForm";
 
 type Props = { onCloseForm: () => void };
 
+export interface ICategory {
+  _id: string;
+  name: string;
+  type: string;
+}
+
 const TransactionForm = (props: Props) => {
-  const [type, setType] = React.useState("expense");
+  const [type, setType] = React.useState("");
+  const [fetchedTypes, setFetchedTypes] = React.useState([]);
   const [partner, setPartner] = React.useState("");
+  const [fetchedPartners, setFetchedPartners] = React.useState([]);
   const [category, setCategory] = React.useState("");
+  const [fetchedCategories, setFetchedCategories] = React.useState([]);
   const [amount, setAmount] = React.useState<string | number>("");
   const [description, setDescription] = React.useState("");
   const [date, setDate] = React.useState(new Date().toISOString().slice(0, 10));
   const [isFinished, setIsFinished] = React.useState(true);
+
+  const { sendRequest: getCategories } = useHttp();
+  const { sendRequest: getPartners } = useHttp();
+  const { sendRequest: getTypes } = useHttp();
 
   const handleClose = props.onCloseForm;
 
@@ -31,35 +47,63 @@ const TransactionForm = (props: Props) => {
     handleClose();
   };
 
+  React.useEffect(() => {
+    getTypes({ url: `${BASE_URL}/user/type/all` }, (data) => {
+      setFetchedTypes(data);
+    });
+  }, []);
+
+  React.useEffect(() => {
+    getCategories(
+      { url: `${BASE_URL}/category/all?typeId=${type}` },
+      (data) => {
+        setFetchedCategories(data);
+      }
+    );
+    getPartners({ url: `${BASE_URL}/partner/all?typeId=${type}` }, (data) => {
+      setFetchedPartners(data);
+    });
+  }, [type]);
+
   return (
     <div>
       <DialogContent>
         <div className="grid grid-cols-3 gap-4">
           <FormControl fullWidth>
-            <InputLabel id="demo-simple-select-label">Type</InputLabel>
+            <InputLabel id="type">Type</InputLabel>
             <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
+              labelId="type"
+              id="type"
               value={type}
               label="type"
               onChange={(event: SelectChangeEvent) => {
                 setType(event.target.value as string);
               }}
             >
-              <MenuItem value={"income"}>Income</MenuItem>
-              <MenuItem value={"expense"}>Expense</MenuItem>
+              {fetchedTypes.map((type: IType) => {
+                return <MenuItem value={type._id}>{type.name}</MenuItem>;
+              })}
+              {/* <MenuItem value={"income"}>Income</MenuItem>
+              <MenuItem value={"expense"}>Expense</MenuItem> */}
             </Select>
           </FormControl>
           <FormControl fullWidth>
-            <TextField
+            <InputLabel id="demo-simple-select-label">Partner</InputLabel>
+            <Select
+              labelId="partner"
               id="partner"
-              label="Partner"
               value={partner}
-              onChange={(event) => {
-                setPartner(event.target.value);
+              label="Partner"
+              onChange={(event: SelectChangeEvent) => {
+                setPartner(event.target.value as string);
               }}
-              defaultValue="PartnerName"
-            ></TextField>
+            >
+              {fetchedPartners.map((category: ICategory) => {
+                return (
+                  <MenuItem value={category._id}>{category.name}</MenuItem>
+                );
+              })}
+            </Select>
           </FormControl>
           <FormControl fullWidth>
             <InputLabel id="demo-simple-select-label">Category</InputLabel>
@@ -72,8 +116,11 @@ const TransactionForm = (props: Props) => {
                 setCategory(event.target.value as string);
               }}
             >
-              <MenuItem value={"salary"}>Salary</MenuItem>
-              <MenuItem value={"parking"}>Parking</MenuItem>
+              {fetchedCategories.map((category: ICategory) => {
+                return (
+                  <MenuItem value={category._id}>{category.name}</MenuItem>
+                );
+              })}
             </Select>
           </FormControl>
           <FormControl fullWidth>
