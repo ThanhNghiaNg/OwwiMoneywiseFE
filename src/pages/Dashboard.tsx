@@ -4,6 +4,7 @@ import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
 import DashBoard from "../components/Dashboard/DashBoard";
+import TransactionList from "../components/TransactionList/TransactionList";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -13,19 +14,16 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-function TransactionTracker() {
+function Dashboard() {
   return (
-    <Box sx={{ flexGrow: 1, marginTop: 10}}>
+    <Box sx={{ flexGrow: 1, marginTop: 10, paddingInline: 25 }}>
       <Grid container xs={12} sx={{ marginBlockEnd: 1 }} spacing={2}>
-        <Grid container xs={12} sm={8}>
+        <Grid container xs={12}>
           <DashBoard />
-        </Grid>
-        <Grid item xs={12} sm={4}>
-          <Item>Transaction List</Item>
         </Grid>
       </Grid>
     </Box>
   );
 }
 
-export default TransactionTracker;
+export default Dashboard;

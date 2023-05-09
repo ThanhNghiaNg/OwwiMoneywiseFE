@@ -13,8 +13,13 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import AdbIcon from "@mui/icons-material/Adb";
+import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router-dom";
+import { BASE_URL, HREFS } from "../../constants";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../store/store";
+import { authActions } from "../../store/authSlice";
+import useHttp from "../../hooks/useHttp";
 
 interface Props {
   /**
@@ -25,37 +30,71 @@ interface Props {
 }
 
 const drawerWidth = 240;
-const navItems = [
-  { name: "Home", href: "/" },
-  { name: "Transaction Tracker", href: "/transaction-tracker" },
-  { name: "Login", href: "/login" },
-  { name: "Logout", href: "/login" },
-  { name: "Profile", href: "/profile" },
-];
 
 export default function Header(props: Props) {
   const { window } = props;
-  const [mobileOpen, setMobileOpen] = React.useState(false);
+  const dispatch = useDispatch();
+  const isLoggedIn = !!useSelector(
+    (state: RootState) => state.auth.accessToken
+  );
   const navigate = useNavigate();
+
+  const [mobileOpen, setMobileOpen] = React.useState(false);
+
+  const { sendRequest } = useHttp();
 
   const handleDrawerToggle = () => {
     setMobileOpen((prevState) => !prevState);
   };
 
+  const navItems = [
+    { name: "Home", href: HREFS.home, isShow: true },
+    { name: "Dashboard", href: HREFS.dashboard, isShow: isLoggedIn },
+    { name: "Transactions", href: HREFS.transactions, isShow: isLoggedIn },
+    { name: "Login", href: HREFS.login, isShow: !isLoggedIn },
+    {
+      name: "Profile",
+      href: HREFS.profile,
+      isShow: isLoggedIn,
+    },
+    {
+      name: "Logout",
+      href: HREFS.login,
+      isShow: isLoggedIn,
+      icon: <LogoutIcon />,
+      handleOnClick: () => {
+        sendRequest({ url: `${BASE_URL}/logout`, method: "POST" });
+        dispatch(authActions.logout());
+        navigate(HREFS.login);
+      },
+    },
+  ];
+
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: "center" }}>
       <Typography variant="h6" sx={{ my: 2 }}>
-        MUI
+        OWWI
       </Typography>
       <Divider />
       <List>
-        {navItems.map((item) => (
-          <ListItem key={item.name} disablePadding>
-            <ListItemButton sx={{ textAlign: "center" }}>
-              <ListItemText primary={item.name} />
-            </ListItemButton>
-          </ListItem>
-        ))}
+        {navItems
+          .filter((item) => item.isShow)
+          .map((item) => (
+            <ListItem key={item.name} disablePadding>
+              <ListItemButton
+                sx={{ textAlign: "center" }}
+                onClick={
+                  item.handleOnClick
+                    ? item.handleOnClick
+                    : () => {
+                        navigate(item.href);
+                      }
+                }
+              >
+                {item.icon ? item.icon : <ListItemText primary={item.name} />}
+              </ListItemButton>
+            </ListItem>
+          ))}
       </List>
     </Box>
   );
@@ -84,17 +123,23 @@ export default function Header(props: Props) {
             OWWI
           </Typography>
           <Box sx={{ display: { xs: "none", sm: "block" } }}>
-            {navItems.map((item) => (
-              <Button
-                key={item.name}
-                sx={{ color: "#fff" }}
-                onClick={() => {
-                  navigate(item.href);
-                }}
-              >
-                {item.name}
-              </Button>
-            ))}
+            {navItems
+              .filter((item) => item.isShow)
+              .map((item) => (
+                <Button
+                  key={item.name}
+                  sx={{ color: "#fff" }}
+                  onClick={
+                    item.handleOnClick
+                      ? item.handleOnClick
+                      : () => {
+                          navigate(item.href);
+                        }
+                  }
+                >
+                  {item.icon ? item.icon : item.name}
+                </Button>
+              ))}
           </Box>
         </Toolbar>
       </AppBar>
