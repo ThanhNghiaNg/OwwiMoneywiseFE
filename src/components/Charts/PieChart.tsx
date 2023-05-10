@@ -8,6 +8,7 @@ type Props = {
 };
 export function PieChart(props: Props) {
   ChartJS.register(ArcElement, Tooltip, Legend);
+  console.log(props.labels, props.data);
   const len = props.labels.length;
   const data = {
     labels: props.labels,
