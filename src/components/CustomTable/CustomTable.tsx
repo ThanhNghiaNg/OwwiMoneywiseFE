@@ -7,9 +7,12 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
+import { Button } from "@mui/material";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import ModeEditOutlineIcon from "@mui/icons-material/ModeEditOutline";
 
 type ItemType = {
-  type: "button" | "string";
+  type: "actions" | "text";
   format?: string;
   color?: string;
   borderColor?: string;
@@ -18,23 +21,22 @@ type ItemType = {
 
 type Props = {
   columns: string[];
-  rows: [
-    [
-      {
-        type: "button" | "string";
-        format?: string;
-        color?: string;
-        borderColor?: string;
-        value: string | JSX.Element;
-      }
-    ]
-  ];
-  handleEdit: (data: ItemType) => void;
+  rows: {
+    type: "actions" | "text";
+    format?: string;
+    color?: string;
+    borderColor?: string;
+    value: string | JSX.Element;
+  }[][];
+  handleEdit: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  handleDelete: (event: React.MouseEvent<HTMLButtonElement>) => void;
 };
 
 export default function CustomTable(props: Props) {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
+
+  const { columns, rows, handleEdit, handleDelete } = props;
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -53,7 +55,7 @@ export default function CustomTable(props: Props) {
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
-              {props.columns.map((column) => (
+              {columns.map((column) => (
                 <TableCell key={column} align={"center"}>
                   {column}
                 </TableCell>
@@ -61,7 +63,7 @@ export default function CustomTable(props: Props) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {props.rows
+            {rows
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row, i) => {
                 return (
@@ -71,12 +73,33 @@ export default function CustomTable(props: Props) {
                     tabIndex={-1}
                     key={`table-row-${i}`}
                   >
-                    {row.map((value, vi) => {
-                      return (
-                        <TableCell key={`table-cell-${i}-${vi}`} align="center">
-                          {value.value}
-                        </TableCell>
-                      );
+                    {row.map((item, vi) => {
+                      if (item.type === "text")
+                        return (
+                          <TableCell
+                            key={`table-cell-${i}-${vi}`}
+                            align="center"
+                          >
+                            {item.value}
+                          </TableCell>
+                        );
+                      else if (item.type === "actions") {
+                        return (
+                          <TableCell
+                            key={`table-cell-${i}-${vi}`}
+                            align="center"
+                          >
+                            <Button onClick={handleEdit}>
+                              <input type="text" value={row[0].value} hidden />
+                              <ModeEditOutlineIcon />
+                            </Button>
+                            <Button color="error" onClick={handleDelete}>
+                              <input type="text" value={row[0].value} hidden />
+                              <DeleteOutlineIcon />
+                            </Button>
+                          </TableCell>
+                        );
+                      }
                     })}
                   </TableRow>
                 );
@@ -87,7 +110,7 @@ export default function CustomTable(props: Props) {
       <TablePagination
         rowsPerPageOptions={[10, 25, 100]}
         component="div"
-        count={props.rows.length}
+        count={rows.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}

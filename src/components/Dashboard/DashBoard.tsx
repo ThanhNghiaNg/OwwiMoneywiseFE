@@ -28,10 +28,9 @@ export default function DashBoard() {
     );
   }, []);
 
-  console.log(isLoading, data);
   return (
     <>
-      {isLoading && data && (
+      {!isLoading && data && (
         <Grid container spacing={2} columns={{ xs: 12 }}>
           <Grid item sm={12} xs={6}>
             <Item>
@@ -53,18 +52,26 @@ export default function DashBoard() {
           </Grid>
         </Grid>
       )}
-      <Grid container spacing={2} columns={{ xs: 12 }} sx={{ marginBlock: 2 }}>
-        <Grid item sm={12} xs={6}>
-          <Item>
-            {/* <PieChart label={label} labels={labels} data={data} /> */}
-          </Item>
+
+      {!isLoading && data && (
+        <Grid
+          container
+          spacing={2}
+          columns={{ xs: 12 }}
+          sx={{ marginBlock: 2 }}
+        >
+          <Grid item sm={12} xs={6}>
+            <Item>
+              {/* <PieChart label={label} labels={labels} data={data} /> */}
+            </Item>
+          </Grid>
+          <Grid item xs={6}>
+            <Item>
+              {/* <PieChart label={label} labels={labels} data={data} /> */}
+            </Item>
+          </Grid>
         </Grid>
-        <Grid item xs={6}>
-          <Item>
-            {/* <PieChart label={label} labels={labels} data={data} /> */}
-          </Item>
-        </Grid>
-      </Grid>
+      )}
     </>
   );
 }

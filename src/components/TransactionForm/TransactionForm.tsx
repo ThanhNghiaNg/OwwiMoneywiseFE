@@ -14,10 +14,14 @@ import {
 } from "@mui/material";
 import { SelectChangeEvent } from "@mui/material/Select";
 import useHttp from "../../hooks/useHttp";
-import { BASE_URL } from "../../constants";
+import { BASE_URL, EFormMode } from "../../constants";
 import { IType } from "../Category/CustomCategoryForm";
+import { useParams } from "react-router-dom";
 
-type Props = { onCloseForm: () => void; onRefresh?: () => void };
+type Props = { id?: string; onCloseForm: () => void; onRefresh?: () => void };
+type FormMode = {
+  mode: EFormMode;
+};
 
 export interface ICategory {
   _id: string;
@@ -25,7 +29,7 @@ export interface ICategory {
   type: string;
 }
 
-const TransactionForm = (props: Props) => {
+const TransactionForm = (props: Props & FormMode) => {
   const [type, setType] = React.useState("");
   const [fetchedTypes, setFetchedTypes] = React.useState([]);
   const [partner, setPartner] = React.useState("");
@@ -38,11 +42,13 @@ const TransactionForm = (props: Props) => {
   const [isFinished, setIsFinished] = React.useState(true);
 
   const { sendRequest: getCategories } = useHttp();
+  const { sendRequest: getTransaction } = useHttp();
   const { sendRequest: getPartners } = useHttp();
   const { sendRequest: getTypes } = useHttp();
-  const { sendRequest: createTransactions } = useHttp();
+  const { sendRequest: submitTransactions } = useHttp();
 
   const handleClose = props.onCloseForm;
+  const { id, mode } = props;
 
   const onSubmit = () => {
     const data = {
@@ -54,9 +60,11 @@ const TransactionForm = (props: Props) => {
       date,
       isFinished,
     };
-    createTransactions(
+    submitTransactions(
       {
-        url: `${BASE_URL}/transaction/create`,
+        url: `${BASE_URL}/transaction/${
+          mode === EFormMode.CREATE ? "create" : `update/${id}`
+        }`,
         body: JSON.stringify(data),
         method: "POST",
       },
@@ -71,6 +79,13 @@ const TransactionForm = (props: Props) => {
     getTypes({ url: `${BASE_URL}/user/type/all` }, (data) => {
       setFetchedTypes(data);
     });
+    alert(id);
+    if (id) {
+      getTransaction({ url: `${BASE_URL}/transaction/${id}` }, (data) => {
+        console.log(data);
+        setAmount(data.amount);
+      });
+    }
   }, []);
 
   React.useEffect(() => {

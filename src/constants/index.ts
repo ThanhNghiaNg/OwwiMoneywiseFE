@@ -19,3 +19,8 @@ export const PASTEL_COLORS = [
 export const BASE_URL = import.meta.env.VITE_API_URL;
 
 export const QUERY_CACHE_TIME_DEFAULT = 5 * 60 * 100; // 5 minutes
+
+export enum EFormMode {
+    CREATE = 'CREATE',
+    UPDATE = 'UPDATE',
+}
