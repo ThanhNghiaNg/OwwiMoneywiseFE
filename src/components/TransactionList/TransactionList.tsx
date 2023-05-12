@@ -30,18 +30,21 @@ export default function TransactionList() {
   };
 
   const handleEdit = (event: React.MouseEvent<HTMLButtonElement>) => {
+    // const id =
+    //   event.target.parentElement.parentElement.parentElement.firstElementChild
+    //     .textContent;
     const id =
-      event.target.parentElement.parentElement.parentElement.firstElementChild
-        .textContent;
-    console.log(id)
+      event.target.parentElement.parentElement.getElementsByTagName("input")[0]
+        .value;
+    // console.log(id);
     editTransaction({ url: `${BASE_URL}/` });
     setSelectedId(id);
     transactionFormEditRef.current?.show();
   };
   const handleDelete = (event: React.MouseEvent<HTMLButtonElement>) => {
     const id =
-      event.target.parentElement.parentElement.parentElement.firstElementChild
-        .textContent;
+      event.target.parentElement.parentElement.getElementsByTagName("input")[0]
+        .value;
     console.log(id);
   };
 

@@ -39,7 +39,7 @@ const TransactionForm = (props: Props & FormMode) => {
   const [amount, setAmount] = React.useState<string | number>("");
   const [description, setDescription] = React.useState("");
   const [date, setDate] = React.useState(new Date().toISOString().slice(0, 10));
-  const [isFinished, setIsFinished] = React.useState(true);
+  const [skipped, setSkipped] = React.useState(false);
 
   const { sendRequest: getCategories } = useHttp();
   const { sendRequest: getTransaction } = useHttp();
@@ -58,15 +58,16 @@ const TransactionForm = (props: Props & FormMode) => {
       amount,
       description,
       date,
-      isFinished,
+      skipped,
     };
+    console.log(data);
     submitTransactions(
       {
         url: `${BASE_URL}/transaction/${
           mode === EFormMode.CREATE ? "create" : `update/${id}`
         }`,
         body: JSON.stringify(data),
-        method: "POST",
+        method: mode === EFormMode.CREATE ? "POST" : "PUT",
       },
       (data) => {
         handleClose();
@@ -79,11 +80,16 @@ const TransactionForm = (props: Props & FormMode) => {
     getTypes({ url: `${BASE_URL}/user/type/all` }, (data) => {
       setFetchedTypes(data);
     });
-    alert(id);
     if (id) {
+      console.log(id);
       getTransaction({ url: `${BASE_URL}/transaction/${id}` }, (data) => {
-        console.log(data);
-        setAmount(data.amount);
+        const fetchedData = data[0];
+        setType(fetchedData.type._id);
+        setPartner(fetchedData.partner._id);
+        setCategory(fetchedData.category._id);
+        setAmount(fetchedData.amount);
+        setDescription(fetchedData.description);
+        setDate(new Date(fetchedData.date).toISOString().slice(0, 10));
       });
     }
   }, []);
@@ -193,13 +199,13 @@ const TransactionForm = (props: Props & FormMode) => {
           <FormControlLabel
             control={
               <Checkbox
-                checked={isFinished}
+                checked={skipped}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  setIsFinished(event.target.checked);
+                  setSkipped(event.target.checked);
                 }}
               />
             }
-            label="Finished"
+            label="Skipped"
           />
         </div>
       </DialogContent>
