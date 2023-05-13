@@ -1,5 +1,6 @@
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Pie } from "react-chartjs-2";
+import { ChartData, ChartOptions } from "chart.js";
 import { PASTEL_COLORS } from "../../constants";
 type Props = {
   label: string;
@@ -23,11 +24,20 @@ export function PieChart(props: Props) {
       },
     ],
   };
+  const options: ChartOptions = {
+    maintainAspectRatio: false,
+    cutout: 50,
+    layout: {
+      padding: 0,
+    },
+    responsive: true,
+  };
 
   return (
     <Pie
       data={dataDisplay}
       style={{ width: "100%", height: "max-content", blockSize: "max-content" }}
+      options={options}
     />
   );
 }

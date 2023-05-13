@@ -64,13 +64,13 @@ export default function TransactionList() {
 
   const columns = [
     "ID",
-    "Type",
+    "Price",
     "Category",
-    "Partner",
-    "Amount",
-    "Description",
     "Date",
+    "Description",
+    "Partner",
     "Skipped",
+    "Type",
     "Actions",
   ];
 
@@ -84,6 +84,11 @@ export default function TransactionList() {
           type: item.type.name,
           date: new Date(item.date).toLocaleDateString(),
         };
+
+        const sortedEntries = Object.entries(fullData).sort((a, b) =>
+          a[0].localeCompare(b[0])
+        );
+        return Object.fromEntries(sortedEntries);
         const { ...rest } = fullData;
         return rest;
       });
