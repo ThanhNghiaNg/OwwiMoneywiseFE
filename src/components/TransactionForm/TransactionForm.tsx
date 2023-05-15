@@ -14,10 +14,13 @@ import {
 } from "@mui/material";
 import { SelectChangeEvent } from "@mui/material/Select";
 import useHttp from "../../hooks/useHttp";
-import { BASE_URL } from "../../constants";
+import { BASE_URL, EFormMode } from "../../constants";
 import { IType } from "../Category/CustomCategoryForm";
 
-type Props = { onCloseForm: () => void; onRefresh?: () => void };
+type Props = { id?: string; onCloseForm: () => void; onRefresh?: () => void };
+type FormMode = {
+  mode: EFormMode;
+};
 
 export interface ICategory {
   _id: string;
@@ -25,7 +28,7 @@ export interface ICategory {
   type: string;
 }
 
-const TransactionForm = (props: Props) => {
+const TransactionForm = (props: Props & FormMode) => {
   const [type, setType] = React.useState("");
   const [fetchedTypes, setFetchedTypes] = React.useState([]);
   const [partner, setPartner] = React.useState("");
@@ -35,14 +38,16 @@ const TransactionForm = (props: Props) => {
   const [amount, setAmount] = React.useState<string | number>("");
   const [description, setDescription] = React.useState("");
   const [date, setDate] = React.useState(new Date().toISOString().slice(0, 10));
-  const [isFinished, setIsFinished] = React.useState(true);
+  const [skipped, setSkipped] = React.useState(false);
 
   const { sendRequest: getCategories } = useHttp();
+  const { sendRequest: getTransaction } = useHttp();
   const { sendRequest: getPartners } = useHttp();
   const { sendRequest: getTypes } = useHttp();
-  const { sendRequest: createTransactions } = useHttp();
+  const { sendRequest: submitTransactions } = useHttp();
 
   const handleClose = props.onCloseForm;
+  const { id, mode } = props;
 
   const onSubmit = () => {
     const data = {
@@ -52,15 +57,19 @@ const TransactionForm = (props: Props) => {
       amount,
       description,
       date,
-      isFinished,
+      skipped,
     };
-    createTransactions(
+    console.log(data);
+    submitTransactions(
       {
-        url: `${BASE_URL}/transaction/create`,
+        url: `${BASE_URL}/transaction/${
+          mode === EFormMode.CREATE ? "create" : `update/${id}`
+        }`,
         body: JSON.stringify(data),
-        method: "POST",
+        method: mode === EFormMode.CREATE ? "POST" : "PUT",
       },
       (data) => {
+        data;
         handleClose();
         props.onRefresh?.();
       }
@@ -71,7 +80,19 @@ const TransactionForm = (props: Props) => {
     getTypes({ url: `${BASE_URL}/user/type/all` }, (data) => {
       setFetchedTypes(data);
     });
-  }, []);
+    if (id) {
+      console.log(id);
+      getTransaction({ url: `${BASE_URL}/transaction/${id}` }, (data) => {
+        const fetchedData = data[0];
+        setType(fetchedData.type._id);
+        setPartner(fetchedData.partner._id);
+        setCategory(fetchedData.category._id);
+        setAmount(fetchedData.amount);
+        setDescription(fetchedData.description);
+        setDate(new Date(fetchedData.date).toISOString().slice(0, 10));
+      });
+    }
+  }, [getTransaction, getTypes, id]);
 
   React.useEffect(() => {
     getCategories(
@@ -83,7 +104,7 @@ const TransactionForm = (props: Props) => {
     getPartners({ url: `${BASE_URL}/partner/all?typeId=${type}` }, (data) => {
       setFetchedPartners(data);
     });
-  }, [type]);
+  }, [type, getCategories, getPartners]);
 
   return (
     <div>
@@ -178,13 +199,13 @@ const TransactionForm = (props: Props) => {
           <FormControlLabel
             control={
               <Checkbox
-                checked={isFinished}
+                checked={skipped}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  setIsFinished(event.target.checked);
+                  setSkipped(event.target.checked);
                 }}
               />
             }
-            label="Finished"
+            label="Skipped"
           />
         </div>
       </DialogContent>

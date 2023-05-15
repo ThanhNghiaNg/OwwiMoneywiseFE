@@ -47,6 +47,7 @@ function useHttp() {
         setError,
         isLoading,
         sendRequest,
+        cancelRequest
     };
 }
 
