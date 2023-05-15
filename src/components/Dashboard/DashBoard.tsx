@@ -32,7 +32,7 @@ export default function DashBoard() {
     <>
       {!isLoading && data && (
         <Grid container spacing={2} columns={{ xs: 12 }}>
-          <Grid item sm={12} xs={6}>
+          {/* <Grid item sm={12} xs={6}>
             <Item>
               <PieChart
                 label={"Income"}
@@ -40,8 +40,8 @@ export default function DashBoard() {
                 data={Object.values(data["Income"])}
               />
             </Item>
-          </Grid>
-          <Grid item xs={6}>
+          </Grid> */}
+          <Grid item xs={12}>
             <Item>
               <PieChart
                 label={"Expense"}
@@ -53,7 +53,7 @@ export default function DashBoard() {
         </Grid>
       )}
 
-      {!isLoading && data && (
+      {/* {!isLoading && data && (
         <Grid
           container
           spacing={2}
@@ -62,16 +62,16 @@ export default function DashBoard() {
         >
           <Grid item sm={12} xs={6}>
             <Item>
-              {/* <PieChart label={label} labels={labels} data={data} /> */}
+              <PieChart label={label} labels={labels} data={data} />
             </Item>
           </Grid>
           <Grid item xs={6}>
             <Item>
-              {/* <PieChart label={label} labels={labels} data={data} /> */}
+              <PieChart label={label} labels={labels} data={data} />
             </Item>
           </Grid>
         </Grid>
-      )}
+      )} */}
     </>
   );
 }
