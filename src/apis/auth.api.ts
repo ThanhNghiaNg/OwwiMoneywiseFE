@@ -10,6 +10,13 @@ export const postLogin = {
 export const postRegister = {
     name: 'register',
     fn: async (username: string, password: string, fullName: string, email: string, phone: string, address: string) => {
-        return fetch(`${BASE_URL}/register`, { body: JSON.stringify({ username, password }) })
+        return fetch(`${BASE_URL}/register`, {
+            body: JSON.stringify({
+                username, password, fullName,
+                email,
+                phone,
+                address
+            })
+        })
     }
 }

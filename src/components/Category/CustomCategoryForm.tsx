@@ -27,7 +27,7 @@ const CustomCategoryForm = (props: Props) => {
   const [fetchedTypes, setFetchedTypes] = React.useState([]);
 
   const { sendRequest, error } = useHttp();
-  const { sendRequest: getTypes, error: getTypesErr } = useHttp();
+  const { sendRequest: getTypes } = useHttp();
 
   const handleClose = props.onCloseForm;
 
@@ -48,7 +48,7 @@ const CustomCategoryForm = (props: Props) => {
     getTypes({ url: `${BASE_URL}/user/type/all` }, (data) => {
       setFetchedTypes(data);
     });
-  }, []);
+  }, [getTypes]);
 
   return (
     <div>

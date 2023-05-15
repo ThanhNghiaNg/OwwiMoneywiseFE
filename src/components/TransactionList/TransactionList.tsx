@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { TransactionEntity } from "../../types/entities/transaction.entity";
 import CustomTable from "../CustomTable/CustomTable";
-import { Box, Button } from "@mui/material";
+import { Button } from "@mui/material";
 
 import TransactionForm from "../TransactionForm/TransactionForm";
 import { IDialogBaseRef } from "../../types/dialog.type";
@@ -23,18 +22,16 @@ export default function TransactionList() {
 
   const { sendRequest: getTransactionsList } = useHttp();
   const { sendRequest: editTransaction } = useHttp();
-  const { sendRequest: deleteTransaction } = useHttp();
+  // const { sendRequest: deleteTransaction } = useHttp();
 
   const toggleReload = () => {
     setReload((prev) => !prev);
   };
 
   const handleEdit = (event: React.MouseEvent<HTMLButtonElement>) => {
-    // const id =
-    //   event.target.parentElement.parentElement.parentElement.firstElementChild
-    //     .textContent;
+    const target = event.target as HTMLElement;
     const id =
-      event.target.parentElement.parentElement.getElementsByTagName("input")[0]
+      target.parentElement?.parentElement?.getElementsByTagName("input")[0]
         .value;
     // console.log(id);
     editTransaction({ url: `${BASE_URL}/` });
@@ -42,8 +39,9 @@ export default function TransactionList() {
     transactionFormEditRef.current?.show();
   };
   const handleDelete = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const target = event.target as HTMLElement;
     const id =
-      event.target.parentElement.parentElement.getElementsByTagName("input")[0]
+    target.parentElement?.parentElement?.getElementsByTagName("input")[0]
         .value;
     console.log(id);
   };
@@ -89,8 +87,6 @@ export default function TransactionList() {
           a[0].localeCompare(b[0])
         );
         return Object.fromEntries(sortedEntries);
-        const { ...rest } = fullData;
-        return rest;
       });
 
       setTransactionList(handledData);

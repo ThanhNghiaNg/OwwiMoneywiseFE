@@ -35,7 +35,7 @@ const CustomPartnerForm = (props: Props) => {
         body: JSON.stringify({ name, type, address }),
         method: "POST",
       },
-      (data) => {
+      () => {
         handleClose();
       }
     );
@@ -45,7 +45,7 @@ const CustomPartnerForm = (props: Props) => {
     getTypes({ url: `${BASE_URL}/user/type/all` }, (data) => {
       setFetchedTypes(data);
     });
-  }, []);
+  }, [getTypes]);
 
   return (
     <div>

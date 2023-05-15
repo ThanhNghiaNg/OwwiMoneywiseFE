@@ -1,15 +1,7 @@
-import { Button, FormControl, InputLabel, TextField } from "@mui/material";
+import { Button, FormControl, TextField } from "@mui/material";
 import React, { useState } from "react";
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-  QueryClient,
-  QueryClientProvider,
-} from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
 import { BASE_URL, HREFS } from "../../constants";
-import { postLogin, postRegister } from "../../apis/auth.api";
 import useHttp from "../../hooks/useHttp";
 import { useDispatch } from "react-redux";
 import { authActions } from "../../store/authSlice";
@@ -27,7 +19,7 @@ export default function AuthForm({ isLogin }: Props) {
   const [address, setAddress] = useState<string>("");
   const [success, setSuccess] = useState<string>("");
 
-  const { sendRequest, error, setError } = useHttp();
+  const { sendRequest, error } = useHttp();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -146,6 +138,7 @@ export default function AuthForm({ isLogin }: Props) {
         </>
       )}
       {error && <p className="text-red-900">{error}</p>}
+      {success && <p className="text-green-900">{error}</p>}
       <Button variant="contained" type="submit">
         {isLogin ? "login" : "register"}
       </Button>

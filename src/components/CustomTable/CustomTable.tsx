@@ -11,22 +11,14 @@ import { Button } from "@mui/material";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import ModeEditOutlineIcon from "@mui/icons-material/ModeEditOutline";
 
-type ItemType = {
-  type: "actions" | "text";
-  format?: string;
-  color?: string;
-  borderColor?: string;
-  value: string | JSX.Element;
-};
-
 type Props = {
   columns: string[];
   rows: {
-    type: "actions" | "text";
-    format?: string;
-    color?: string;
-    borderColor?: string;
-    value: string | JSX.Element;
+    type: string;
+    value: string;
+    // format?: string;
+    // color?: string;
+    // borderColor?: string;
   }[][];
   handleEdit: (event: React.MouseEvent<HTMLButtonElement>) => void;
   handleDelete: (event: React.MouseEvent<HTMLButtonElement>) => void;
@@ -39,6 +31,7 @@ export default function CustomTable(props: Props) {
   const { columns, rows, handleEdit, handleDelete } = props;
 
   const handleChangePage = (event: unknown, newPage: number) => {
+    event;
     setPage(newPage);
   };
 

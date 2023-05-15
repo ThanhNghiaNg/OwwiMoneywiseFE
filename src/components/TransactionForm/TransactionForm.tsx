@@ -16,7 +16,6 @@ import { SelectChangeEvent } from "@mui/material/Select";
 import useHttp from "../../hooks/useHttp";
 import { BASE_URL, EFormMode } from "../../constants";
 import { IType } from "../Category/CustomCategoryForm";
-import { useParams } from "react-router-dom";
 
 type Props = { id?: string; onCloseForm: () => void; onRefresh?: () => void };
 type FormMode = {
@@ -70,6 +69,7 @@ const TransactionForm = (props: Props & FormMode) => {
         method: mode === EFormMode.CREATE ? "POST" : "PUT",
       },
       (data) => {
+        data;
         handleClose();
         props.onRefresh?.();
       }
@@ -92,7 +92,7 @@ const TransactionForm = (props: Props & FormMode) => {
         setDate(new Date(fetchedData.date).toISOString().slice(0, 10));
       });
     }
-  }, []);
+  }, [getTransaction, getTypes, id]);
 
   React.useEffect(() => {
     getCategories(
@@ -104,7 +104,7 @@ const TransactionForm = (props: Props & FormMode) => {
     getPartners({ url: `${BASE_URL}/partner/all?typeId=${type}` }, (data) => {
       setFetchedPartners(data);
     });
-  }, [type]);
+  }, [type, getCategories, getPartners]);
 
   return (
     <div>
