@@ -90,9 +90,10 @@ const TransactionForm = (props: Props & FormMode) => {
         setAmount(fetchedData.amount);
         setDescription(fetchedData.description);
         setDate(new Date(fetchedData.date).toISOString().slice(0, 10));
+        setSkipped(fetchedData.skipped);
       });
     }
-  }, [getTransaction, getTypes, id]);
+  }, [id]);
 
   React.useEffect(() => {
     getCategories(
@@ -104,7 +105,7 @@ const TransactionForm = (props: Props & FormMode) => {
     getPartners({ url: `${BASE_URL}/partner/all?typeId=${type}` }, (data) => {
       setFetchedPartners(data);
     });
-  }, [type, getCategories, getPartners]);
+  }, [type]);
 
   return (
     <div>
