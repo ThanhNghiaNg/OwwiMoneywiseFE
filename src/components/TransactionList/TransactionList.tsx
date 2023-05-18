@@ -14,7 +14,6 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 
 export default function TransactionList() {
-  const userId = useSelector((state: RootState) => state.auth.accessToken);
   const [transactionList, setTransactionList] = useState([]);
   const [selectedId, setSelectedId] = useState<string>();
   const [reload, setReload] = useState(false);
@@ -27,7 +26,6 @@ export default function TransactionList() {
 
   const { sendRequest: getTransactionsList, isLoading: isLoadingTransactions } =
     useHttp();
-  const { sendRequest: editTransaction } = useHttp();
   const { sendRequest: deleteTransaction } = useHttp();
 
   const toggleReload = () => {
