@@ -8,7 +8,9 @@ export default function MainLayout(props: Props) {
   return (
     <div>
       <Header />
-      <Box sx={{ width: "100vw", padding: 3, marginTop: 3 }}>{props.children}</Box>
+      <Box sx={{ width: "100vw", padding: 3, marginTop: 3 }}>
+        {props.children}
+      </Box>
     </div>
   );
 }

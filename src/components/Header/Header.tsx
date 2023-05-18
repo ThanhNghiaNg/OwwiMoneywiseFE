@@ -20,6 +20,9 @@ import { RootState } from "../../store/store";
 import { authActions } from "../../store/authSlice";
 import useHttp from "../../hooks/useHttp";
 
+import LogoImage from "../../assets/images/icon.jpg";
+import classes from "./Header.module.css";
+
 interface Props {
   /**
    * Injected by the documentation to work in an iframe.
@@ -72,7 +75,9 @@ export default function Header(props: Props) {
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: "center" }}>
       <Typography variant="h6" sx={{ my: 2 }}>
-        OWWI
+        <div className={classes["logo--mobile"]}>
+          <img src={LogoImage}></img>
+        </div>
       </Typography>
       <Divider />
       <List>
@@ -90,7 +95,7 @@ export default function Header(props: Props) {
                       }
                 }
               >
-                {item.icon ? item.icon : <ListItemText primary={item.name} />}
+                <ListItemText primary={item.icon ? item.icon : item.name} />
               </ListItemButton>
             </ListItem>
           ))}
@@ -119,7 +124,9 @@ export default function Header(props: Props) {
             component="div"
             sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
           >
-            OWWI
+            <div className={classes.logo}>
+              <img src={LogoImage}></img>
+            </div>
           </Typography>
           <Box sx={{ display: { xs: "none", sm: "block" } }}>
             {navItems
@@ -127,7 +134,7 @@ export default function Header(props: Props) {
               .map((item) => (
                 <Button
                   key={item.name}
-                  sx={{ color: "#fff" }}
+                  sx={{ color: "#fff", textAlign: "center" }}
                   onClick={
                     item.handleOnClick
                       ? item.handleOnClick
