@@ -41,24 +41,36 @@ export default function TransactionList() {
   const handleDelete = (event: React.MouseEvent<HTMLButtonElement>) => {
     const target = event.target as HTMLElement;
     const id =
-    target.parentElement?.parentElement?.getElementsByTagName("input")[0]
+      target.parentElement?.parentElement?.getElementsByTagName("input")[0]
         .value;
     console.log(id);
   };
 
-  const dataHandled = transactionList.map((item) =>
-    Object.values(item)
-      .map((value) => ({
-        type: "text",
-        value: String(value),
-      }))
+  const dataHandled = transactionList.map((item) => {
+    const keys = Object.keys(item);
+    return Object.values(item)
+      .map((value, i) => {
+        if (keys[i] === "skipped") {
+          return {
+            type: "bool",
+            value: String(value),
+          };
+        } else {
+          return {
+            type: "text",
+            value: String(value),
+          };
+        }
+      })
       .concat([
         {
           type: "actions",
           value: "",
         },
-      ])
-  );
+      ]);
+  });
+
+  console.log(dataHandled);
 
   const columns = [
     "ID",

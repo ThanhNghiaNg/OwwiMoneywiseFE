@@ -47,15 +47,15 @@ export default function Header(props: Props) {
   };
 
   const navItems = [
-    { name: "Home", href: HREFS.home, isShow: true },
+    // { name: "Home", href: HREFS.home, isShow: true },
     { name: "Dashboard", href: HREFS.dashboard, isShow: isLoggedIn },
     { name: "Transactions", href: HREFS.transactions, isShow: isLoggedIn },
     { name: "Login", href: HREFS.login, isShow: !isLoggedIn },
-    {
-      name: "Profile",
-      href: HREFS.profile,
-      isShow: isLoggedIn,
-    },
+    // {
+    //   name: "Profile",
+    //   href: HREFS.profile,
+    //   isShow: isLoggedIn,
+    // },
     {
       name: "Logout",
       href: HREFS.login,

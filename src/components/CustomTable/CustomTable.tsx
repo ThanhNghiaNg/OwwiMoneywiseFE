@@ -7,7 +7,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-import { Button } from "@mui/material";
+import { Button, Checkbox } from "@mui/material";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import ModeEditOutlineIcon from "@mui/icons-material/ModeEditOutline";
 
@@ -90,6 +90,18 @@ export default function CustomTable(props: Props) {
                               <input type="text" value={row[0].value} hidden />
                               <DeleteOutlineIcon />
                             </Button>
+                          </TableCell>
+                        );
+                      } else if (item.type === "bool") {
+                        return (
+                          <TableCell
+                            key={`table-cell-${i}-${vi}`}
+                            align="center"
+                          >
+                            <Checkbox
+                              checked={item.value === "true"}
+                              disabled={true}
+                            />
                           </TableCell>
                         );
                       }
