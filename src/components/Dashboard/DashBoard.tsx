@@ -5,6 +5,8 @@ import { PieChart } from "../Charts/PieChart";
 import useHttp from "../../hooks/useHttp";
 import { useEffect, useState } from "react";
 import { BASE_URL } from "../../constants";
+import NoDataImage from "../UI/NoDataImage";
+import LoadingSpin from "../UI/LoadingSpin";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -15,7 +17,7 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 export default function DashBoard() {
-  const [data, setData] = useState(null);
+  const [data, setData] = useState({ Income: null, Outcome: null });
   const { sendRequest: getOutComeStatistic, isLoading } = useHttp();
 
   useEffect(() => {
@@ -30,6 +32,7 @@ export default function DashBoard() {
 
   return (
     <>
+      {isLoading && <LoadingSpin />}
       {!isLoading && data && (
         <Grid container spacing={2} columns={{ xs: 12 }}>
           {/* <Grid item sm={12} xs={6}>
@@ -43,11 +46,15 @@ export default function DashBoard() {
           </Grid> */}
           <Grid item xs={12}>
             <Item>
-              <PieChart
-                label={"Expense"}
-                labels={Object.keys(data["Outcome"])}
-                data={Object.values(data["Outcome"])}
-              />
+              {data["Outcome"] ? (
+                <PieChart
+                  label={"Expense"}
+                  labels={Object.keys(data["Outcome"])}
+                  data={Object.values(data["Outcome"])}
+                />
+              ) : (
+                <NoDataImage />
+              )}
             </Item>
           </Grid>
         </Grid>

@@ -5,6 +5,7 @@ import { BASE_URL, HREFS } from "../../constants";
 import useHttp from "../../hooks/useHttp";
 import { useDispatch } from "react-redux";
 import { authActions } from "../../store/authSlice";
+import LoadingSpin from "../UI/LoadingSpin";
 
 type Props = { isLogin: boolean };
 
@@ -19,7 +20,7 @@ export default function AuthForm({ isLogin }: Props) {
   const [address, setAddress] = useState<string>("");
   const [success, setSuccess] = useState<string>("");
 
-  const { sendRequest, error } = useHttp();
+  const { sendRequest, error, isLoading } = useHttp();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -139,15 +140,18 @@ export default function AuthForm({ isLogin }: Props) {
       )}
       {error && <p className="text-red-900">{error}</p>}
       {success && <p className="text-green-900">{error}</p>}
-      <Button variant="contained" type="submit">
+      {isLoading && <LoadingSpin paddingBlock="0rem" />}
+      <Button variant="contained" type="submit" disabled={isLoading}>
         {isLogin ? "login" : "register"}
       </Button>
-      <span>
-        or{" "}
-        <Link to={isLogin ? HREFS.register : HREFS.login}>
-          {isLogin ? "register" : "login"}
-        </Link>
-      </span>
+      {!isLoading && (
+        <span>
+          or{" "}
+          <Link to={isLogin ? HREFS.register : HREFS.login}>
+            {isLogin ? "register" : "login"}
+          </Link>
+        </span>
+      )}
     </form>
   );
 }

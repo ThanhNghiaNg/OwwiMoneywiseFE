@@ -20,7 +20,8 @@ export default function TransactionList() {
   const categoryFormRef = useRef<IDialogBaseRef>(null);
   const partnerFormRef = useRef<IDialogBaseRef>(null);
 
-  const { sendRequest: getTransactionsList } = useHttp();
+  const { sendRequest: getTransactionsList, isLoading: isLoadingTransactions } =
+    useHttp();
   const { sendRequest: editTransaction } = useHttp();
   // const { sendRequest: deleteTransaction } = useHttp();
 
@@ -50,7 +51,7 @@ export default function TransactionList() {
     const keys = Object.keys(item);
     return Object.values(item)
       .map((value, i) => {
-        if (keys[i] === "skipped") {
+        if (keys[i] === "isDone") {
           return {
             type: "bool",
             value: String(value),
@@ -73,13 +74,12 @@ export default function TransactionList() {
   console.log(dataHandled);
 
   const columns = [
-    "ID",
     "Price",
     "Category",
     "Date",
     "Description",
+    "Done",
     "Partner",
-    "Skipped",
     "Type",
     "Actions",
   ];
@@ -178,6 +178,7 @@ export default function TransactionList() {
         </Button>
       </div>
       <CustomTable
+        isLoading={isLoadingTransactions}
         columns={columns}
         rows={dataHandled}
         handleEdit={handleEdit}
