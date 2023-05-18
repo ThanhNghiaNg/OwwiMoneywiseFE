@@ -16,6 +16,7 @@ import { SelectChangeEvent } from "@mui/material/Select";
 import useHttp from "../../hooks/useHttp";
 import { BASE_URL, EFormMode } from "../../constants";
 import { IType } from "../Category/CustomCategoryForm";
+import LoadingSpin from "../UI/LoadingSpin";
 
 type Props = { id?: string; onCloseForm: () => void; onRefresh?: () => void };
 type FormMode = {
@@ -38,10 +39,11 @@ const TransactionForm = (props: Props & FormMode) => {
   const [amount, setAmount] = React.useState<string | number>("");
   const [description, setDescription] = React.useState("");
   const [date, setDate] = React.useState(new Date().toISOString().slice(0, 10));
-  const [skipped, setSkipped] = React.useState(false);
+  const [isDone, setIsDone] = React.useState(true);
 
   const { sendRequest: getCategories } = useHttp();
-  const { sendRequest: getTransaction } = useHttp();
+  const { sendRequest: getTransaction, isLoading: isLoadingTransaction } =
+    useHttp();
   const { sendRequest: getPartners } = useHttp();
   const { sendRequest: getTypes } = useHttp();
   const { sendRequest: submitTransactions } = useHttp();
@@ -57,7 +59,7 @@ const TransactionForm = (props: Props & FormMode) => {
       amount,
       description,
       date,
-      skipped,
+      isDone,
     };
     console.log(data);
     submitTransactions(
@@ -90,7 +92,7 @@ const TransactionForm = (props: Props & FormMode) => {
         setAmount(fetchedData.amount);
         setDescription(fetchedData.description);
         setDate(new Date(fetchedData.date).toISOString().slice(0, 10));
-        setSkipped(fetchedData.skipped);
+        setIsDone(fetchedData.isDone);
       });
     }
   }, [id]);
@@ -108,107 +110,110 @@ const TransactionForm = (props: Props & FormMode) => {
   }, [type]);
 
   return (
-    <div>
-      <DialogContent>
-        <div className="grid grid-cols-3 gap-4">
-          <FormControl fullWidth>
-            <InputLabel id="type">Type</InputLabel>
-            <Select
-              labelId="type"
-              id="type"
-              value={type}
-              label="type"
-              onChange={(event: SelectChangeEvent) => {
-                setType(event.target.value as string);
-              }}
-            >
-              {fetchedTypes.map((type: IType) => {
-                return <MenuItem value={type._id}>{type.name}</MenuItem>;
-              })}
-              {/* <MenuItem value={"income"}>Income</MenuItem>
-              <MenuItem value={"expense"}>Expense</MenuItem> */}
-            </Select>
-          </FormControl>
-          <FormControl fullWidth>
-            <InputLabel id="demo-simple-select-label">Partner</InputLabel>
-            <Select
-              labelId="partner"
-              id="partner"
-              value={partner}
-              label="Partner"
-              onChange={(event: SelectChangeEvent) => {
-                setPartner(event.target.value as string);
-              }}
-            >
-              {fetchedPartners.map((category: ICategory) => {
-                return (
-                  <MenuItem value={category._id}>{category.name}</MenuItem>
-                );
-              })}
-            </Select>
-          </FormControl>
-          <FormControl fullWidth>
-            <InputLabel id="demo-simple-select-label">Category</InputLabel>
-            <Select
-              labelId="category"
-              id="category"
-              value={category}
-              label="category"
-              onChange={(event: SelectChangeEvent) => {
-                setCategory(event.target.value as string);
-              }}
-            >
-              {fetchedCategories.map((category: ICategory) => {
-                return (
-                  <MenuItem value={category._id}>{category.name}</MenuItem>
-                );
-              })}
-            </Select>
-          </FormControl>
-          <FormControl fullWidth>
-            <TextField
-              id="amount"
-              label="Amount"
-              type="number"
-              value={amount}
-              onChange={(event) => {
-                setAmount(Number(event.target.value));
-              }}
-            ></TextField>
-          </FormControl>
-          <FormControl fullWidth>
-            <TextField
-              id="Description"
-              label="Description"
-              value={description}
-              onChange={(event) => {
-                setDescription(event.target.value);
-              }}
-            ></TextField>
-          </FormControl>
-          <FormControl fullWidth>
-            {/* <InputLabel id="date">Date</InputLabel> */}
-            <TextField
-              id="Date"
-              value={date}
-              type="date"
-              onChange={(event) => {
-                setDate(event.target.value);
-              }}
-            ></TextField>
-          </FormControl>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={skipped}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  setSkipped(event.target.checked);
+    <>
+      <DialogContent sx={{ minWidth: "500px" }}>
+        {isLoadingTransaction && <LoadingSpin />}
+        {!isLoadingTransaction && (
+          <div className="grid grid-cols-3 gap-4 pt-3">
+            <FormControl fullWidth>
+              <InputLabel id="type">Type</InputLabel>
+              <Select
+                labelId="type"
+                id="type"
+                value={type}
+                label="type"
+                onChange={(event: SelectChangeEvent) => {
+                  setType(event.target.value as string);
                 }}
-              />
-            }
-            label="Skipped"
-          />
-        </div>
+              >
+                {fetchedTypes.map((type: IType) => {
+                  return <MenuItem value={type._id}>{type.name}</MenuItem>;
+                })}
+                {/* <MenuItem value={"income"}>Income</MenuItem>
+              <MenuItem value={"expense"}>Expense</MenuItem> */}
+              </Select>
+            </FormControl>
+            <FormControl fullWidth>
+              <InputLabel id="demo-simple-select-label">Partner</InputLabel>
+              <Select
+                labelId="partner"
+                id="partner"
+                value={partner}
+                label="Partner"
+                onChange={(event: SelectChangeEvent) => {
+                  setPartner(event.target.value as string);
+                }}
+              >
+                {fetchedPartners.map((category: ICategory) => {
+                  return (
+                    <MenuItem value={category._id}>{category.name}</MenuItem>
+                  );
+                })}
+              </Select>
+            </FormControl>
+            <FormControl fullWidth>
+              <InputLabel id="demo-simple-select-label">Category</InputLabel>
+              <Select
+                labelId="category"
+                id="category"
+                value={category}
+                label="category"
+                onChange={(event: SelectChangeEvent) => {
+                  setCategory(event.target.value as string);
+                }}
+              >
+                {fetchedCategories.map((category: ICategory) => {
+                  return (
+                    <MenuItem value={category._id}>{category.name}</MenuItem>
+                  );
+                })}
+              </Select>
+            </FormControl>
+            <FormControl fullWidth>
+              <TextField
+                id="amount"
+                label="Amount"
+                type="number"
+                value={amount}
+                onChange={(event) => {
+                  setAmount(Number(event.target.value));
+                }}
+              ></TextField>
+            </FormControl>
+            <FormControl fullWidth>
+              <TextField
+                id="Description"
+                label="Description"
+                value={description}
+                onChange={(event) => {
+                  setDescription(event.target.value);
+                }}
+              ></TextField>
+            </FormControl>
+            <FormControl fullWidth>
+              {/* <InputLabel id="date">Date</InputLabel> */}
+              <TextField
+                id="Date"
+                value={date}
+                type="date"
+                onChange={(event) => {
+                  setDate(event.target.value);
+                }}
+              ></TextField>
+            </FormControl>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={isDone}
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                    setIsDone(event.target.checked);
+                  }}
+                />
+              }
+              label="Done"
+            />
+          </div>
+        )}
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>Cancel</Button>
@@ -216,7 +221,7 @@ const TransactionForm = (props: Props & FormMode) => {
           Confirm
         </Button>
       </DialogActions>
-    </div>
+    </>
   );
 };
 

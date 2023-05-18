@@ -7,11 +7,14 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-import { Button, Checkbox } from "@mui/material";
+import { Box, Button, Checkbox } from "@mui/material";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import ModeEditOutlineIcon from "@mui/icons-material/ModeEditOutline";
+import NoDataImage from "../UI/NoDataImage";
+import LoadingSpin from "../UI/LoadingSpin";
 
 type Props = {
+  isLoading: boolean;
   columns: string[];
   rows: {
     type: string;
@@ -28,7 +31,7 @@ export default function CustomTable(props: Props) {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
-  const { columns, rows, handleEdit, handleDelete } = props;
+  const { isLoading, columns, rows, handleEdit, handleDelete } = props;
 
   const handleChangePage = (event: unknown, newPage: number) => {
     event;
@@ -66,7 +69,7 @@ export default function CustomTable(props: Props) {
                     tabIndex={-1}
                     key={`table-row-${i}`}
                   >
-                    {row.map((item, vi) => {
+                    {row.slice(1).map((item, vi) => {
                       if (item.type === "text")
                         return (
                           <TableCell
@@ -112,6 +115,8 @@ export default function CustomTable(props: Props) {
           </TableBody>
         </Table>
       </TableContainer>
+      {!isLoading && rows.length === 0 && <NoDataImage />}
+      {isLoading && <LoadingSpin />}
       <TablePagination
         rowsPerPageOptions={[7, 10, 25, 100]}
         component="div"
