@@ -17,7 +17,7 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 export default function DashBoard() {
-  const [data, setData] = useState({ Income: null, Outcome: null });
+  const [data, setData] = useState({ Income: {}, Outcome: {} });
   const { sendRequest: getOutComeStatistic, isLoading } = useHttp();
 
   useEffect(() => {
@@ -29,6 +29,8 @@ export default function DashBoard() {
       }
     );
   }, []);
+
+  console.log(JSON.stringify(data["Outcome"]) === "{}");
 
   return (
     <>
@@ -46,7 +48,7 @@ export default function DashBoard() {
           </Grid> */}
           <Grid item xs={12}>
             <Item>
-              {data["Outcome"] ? (
+              {Object.keys(data["Outcome"]).length > 0 ? (
                 <PieChart
                   label={"Expense"}
                   labels={Object.keys(data["Outcome"])}

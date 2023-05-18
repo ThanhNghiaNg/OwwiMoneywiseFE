@@ -2,10 +2,15 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import DashBoard from "../components/Dashboard/DashBoard";
 
-
 function Dashboard() {
   return (
-    <Box sx={{ flexGrow: 1, marginTop: 10, paddingInline: 25 }}>
+    <Box
+      sx={{
+        flexGrow: 1,
+        marginTop: 10,
+        paddingInline: { xs: 2, sm: 5, lg: 25 },
+      }}
+    >
       <Grid container xs={12} sx={{ marginBlockEnd: 1 }} spacing={2}>
         <Grid container xs={12}>
           <DashBoard />

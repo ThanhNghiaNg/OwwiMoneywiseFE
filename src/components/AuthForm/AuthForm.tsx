@@ -44,7 +44,8 @@ export default function AuthForm({ isLogin }: Props) {
           setSuccess("Register Successfully!");
           setTimeout(() => {
             navigate("/login");
-          }, 1000);
+            setSuccess("");
+          }, 1500);
         }
       }
     );
@@ -139,7 +140,7 @@ export default function AuthForm({ isLogin }: Props) {
         </>
       )}
       {error && <p className="text-red-900">{error}</p>}
-      {success && <p className="text-green-900">{error}</p>}
+      {success && <p className="text-green-900">{success}</p>}
       {isLoading && <LoadingSpin paddingBlock="0rem" />}
       <Button variant="contained" type="submit" disabled={isLoading}>
         {isLogin ? "login" : "register"}

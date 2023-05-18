@@ -9,21 +9,26 @@ import CustomCategoryForm from "../Category/CustomCategoryForm";
 import CustomPartnerForm from "../Partner/CustomPartnerForm";
 import { BASE_URL, EFormMode } from "../../constants";
 import useHttp from "../../hooks/useHttp";
+import ConfirmDialog from "../CommonDialog/ConfirmDialog";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store/store";
 
 export default function TransactionList() {
+  const userId = useSelector((state: RootState) => state.auth.accessToken);
   const [transactionList, setTransactionList] = useState([]);
   const [selectedId, setSelectedId] = useState<string>();
   const [reload, setReload] = useState(false);
 
   const transactionFormRef = useRef<IDialogBaseRef>(null);
   const transactionFormEditRef = useRef<IDialogBaseRef>(null);
+  const transactionDeleteDialogRef = useRef<IDialogBaseRef>(null);
   const categoryFormRef = useRef<IDialogBaseRef>(null);
   const partnerFormRef = useRef<IDialogBaseRef>(null);
 
   const { sendRequest: getTransactionsList, isLoading: isLoadingTransactions } =
     useHttp();
   const { sendRequest: editTransaction } = useHttp();
-  // const { sendRequest: deleteTransaction } = useHttp();
+  const { sendRequest: deleteTransaction } = useHttp();
 
   const toggleReload = () => {
     setReload((prev) => !prev);
@@ -34,17 +39,29 @@ export default function TransactionList() {
     const id =
       target.parentElement?.parentElement?.getElementsByTagName("input")[0]
         .value;
-    // console.log(id);
-    editTransaction({ url: `${BASE_URL}/` });
     setSelectedId(id);
     transactionFormEditRef.current?.show();
   };
-  const handleDelete = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleOpenDialogDelete = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
     const target = event.target as HTMLElement;
     const id =
       target.parentElement?.parentElement?.getElementsByTagName("input")[0]
         .value;
-    console.log(id);
+    setSelectedId(id);
+    transactionDeleteDialogRef.current?.show();
+  };
+
+  const handleDeleteTransaction = () => {
+    console.log(selectedId);
+    deleteTransaction(
+      { url: `${BASE_URL}/transaction/delete/${selectedId}`, method: "DELETE" },
+      () => {
+        transactionDeleteDialogRef.current?.hide();
+        toggleReload();
+      }
+    );
   };
 
   const dataHandled = transactionList.map((item) => {
@@ -70,8 +87,6 @@ export default function TransactionList() {
         },
       ]);
   });
-
-  console.log(dataHandled);
 
   const columns = [
     "Price",
@@ -118,6 +133,12 @@ export default function TransactionList() {
           }}
         />
       </FormDialog>
+      <ConfirmDialog
+        title="Delete Transaction"
+        onSubmit={handleDeleteTransaction}
+        content="Are you sure to delete this transaction?"
+        ref={transactionDeleteDialogRef}
+      />
 
       <FormDialog title="New Transaction" ref={transactionFormEditRef}>
         <TransactionForm
@@ -182,7 +203,7 @@ export default function TransactionList() {
         columns={columns}
         rows={dataHandled}
         handleEdit={handleEdit}
-        handleDelete={handleDelete}
+        handleDelete={handleOpenDialogDelete}
       />
     </div>
   );
