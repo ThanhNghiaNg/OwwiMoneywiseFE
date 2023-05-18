@@ -10,8 +10,6 @@ import CustomPartnerForm from "../Partner/CustomPartnerForm";
 import { BASE_URL, EFormMode } from "../../constants";
 import useHttp from "../../hooks/useHttp";
 import ConfirmDialog from "../CommonDialog/ConfirmDialog";
-import { useSelector } from "react-redux";
-import { RootState } from "../../store/store";
 
 export default function TransactionList() {
   const [transactionList, setTransactionList] = useState([]);
