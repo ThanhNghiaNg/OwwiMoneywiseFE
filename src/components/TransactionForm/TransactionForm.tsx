@@ -4,6 +4,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 
 import {
+  Autocomplete,
   Checkbox,
   FormControl,
   FormControlLabel,
@@ -33,8 +34,10 @@ const TransactionForm = (props: Props & FormMode) => {
   const [type, setType] = React.useState("");
   const [fetchedTypes, setFetchedTypes] = React.useState([]);
   const [partner, setPartner] = React.useState("");
+  const [newPartner, setNewPartner] = React.useState("");
   const [fetchedPartners, setFetchedPartners] = React.useState([]);
   const [category, setCategory] = React.useState("");
+  const [newCategory, setNewCategory] = React.useState("");
   const [fetchedCategories, setFetchedCategories] = React.useState([]);
   const [amount, setAmount] = React.useState<string | number>("");
   const [description, setDescription] = React.useState("");
@@ -129,12 +132,21 @@ const TransactionForm = (props: Props & FormMode) => {
                 {fetchedTypes.map((type: IType) => {
                   return <MenuItem value={type._id}>{type.name}</MenuItem>;
                 })}
-                {/* <MenuItem value={"income"}>Income</MenuItem>
-              <MenuItem value={"expense"}>Expense</MenuItem> */}
               </Select>
             </FormControl>
             <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">Partner</InputLabel>
+              <Autocomplete
+                freeSolo
+                value={partner}
+                onChange={(event: React.ChangeEvent) => {
+                  setPartner(event.target.value);
+                }}
+                options={fetchedPartners?.map((i) => i.name)}
+                renderInput={(params) => (
+                  <TextField {...params} label="Partner" />
+                )}
+              />
+              {/* <InputLabel id="demo-simple-select-label">Partner</InputLabel>
               <Select
                 labelId="partner"
                 id="partner"
@@ -149,7 +161,7 @@ const TransactionForm = (props: Props & FormMode) => {
                     <MenuItem value={category._id}>{category.name}</MenuItem>
                   );
                 })}
-              </Select>
+              </Select> */}
             </FormControl>
             <FormControl fullWidth>
               <InputLabel id="demo-simple-select-label">Category</InputLabel>

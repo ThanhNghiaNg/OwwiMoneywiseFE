@@ -45,7 +45,7 @@ const CustomPartnerForm = (props: Props) => {
     getTypes({ url: `${BASE_URL}/user/type/all` }, (data) => {
       setFetchedTypes(data);
     });
-  }, [getTypes]);
+  }, []);
 
   return (
     <div>
