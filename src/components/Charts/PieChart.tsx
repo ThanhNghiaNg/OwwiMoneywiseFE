@@ -1,7 +1,8 @@
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
-import { Pie } from "react-chartjs-2";
+import { Doughnut } from "react-chartjs-2";
 import { ChartOptions } from "chart.js";
 import { PASTEL_COLORS } from "../../constants";
+import dotStyleCurrency from "../../utils/common";
 type Props = {
   label: string;
   labels: string[];
@@ -24,20 +25,37 @@ export function PieChart(props: Props) {
       },
     ],
   };
-  const options: ChartOptions = {
-    maintainAspectRatio: false,
-    // cutout: 50,
+  const options: ChartOptions<"doughnut"> = {
+    maintainAspectRatio: true,
+    cutout: 60,
     layout: {
       padding: 0,
     },
     responsive: true,
+    plugins: {
+      legend: {
+        labels: {
+          padding: 10,
+          boxWidth: 15,
+        },
+      },
+    },
   };
 
   return (
-    <Pie
-      data={dataDisplay}
-      style={{ width: "100%", height: "max-content", blockSize: "max-content" }}
-      options={options}
-    />
+    <>
+      <Doughnut
+        data={dataDisplay}
+        style={{
+          width: "100%",
+          // height: "max-content",
+          // blockSize: "max-content",
+        }}
+        options={options}
+      />
+      <p className="text-lg mt-5">
+        {`Total: ${dotStyleCurrency(data.reduce((acc, i) => i + acc, 0))}`}
+      </p>
+    </>
   );
 }
