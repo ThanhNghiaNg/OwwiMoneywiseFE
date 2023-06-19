@@ -10,6 +10,7 @@ import CustomPartnerForm from "../Partner/CustomPartnerForm";
 import { BASE_URL, EFormMode } from "../../constants";
 import useHttp from "../../hooks/useHttp";
 import ConfirmDialog from "../CommonDialog/ConfirmDialog";
+import dotStyleCurrency from "../../utils/common";
 
 export default function TransactionList() {
   const [transactionList, setTransactionList] = useState([]);
@@ -100,6 +101,7 @@ export default function TransactionList() {
       const handledData = data.map((item: any) => {
         const fullData = {
           ...item,
+          amount: dotStyleCurrency(item.amount),
           partner: item.partner.name,
           category: item.category.name,
           type: item.type.name,
