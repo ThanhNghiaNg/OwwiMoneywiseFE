@@ -1,5 +1,5 @@
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
-import { Doughnut, Pie } from "react-chartjs-2";
+import { Doughnut } from "react-chartjs-2";
 import { ChartOptions } from "chart.js";
 import { PASTEL_COLORS } from "../../constants";
 import dotStyleCurrency from "../../utils/common";

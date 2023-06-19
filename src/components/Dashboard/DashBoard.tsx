@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 import { BASE_URL } from "../../constants";
 import NoDataImage from "../UI/NoDataImage";
 import LoadingSpin from "../UI/LoadingSpin";
-import dotStyleCurrency from "../../utils/common";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
