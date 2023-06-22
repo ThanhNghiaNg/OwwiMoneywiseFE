@@ -15,53 +15,71 @@ import LoadingSpin from "../UI/LoadingSpin";
 
 type Props = {
   isLoading: boolean;
-  columns: string[];
-  rows: {
-    type: string;
-    value: string;
-    // format?: string;
-    // color?: string;
-    // borderColor?: string;
-  }[][];
+  fields: { key: string; type?: string; label: string }[];
+  data: any[];
   handleEdit: (event: React.MouseEvent<HTMLButtonElement>) => void;
   handleDelete: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  handleChangePage: () => void;
 };
 
-export default function CustomTable(props: Props) {
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
-
-  const { isLoading, columns, rows, handleEdit, handleDelete } = props;
-
-  const handleChangePage = (event: unknown, newPage: number) => {
-    event;
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
+const CustomTable = React.forwardRef(
+  (
+    {
+      isLoading,
+      fields,
+      data,
+      handleEdit,
+      handleDelete,
+      handleChangePage,
+    }: Props,
+    ref
   ) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
+    const [page, setPage] = React.useState(0);
+    const [rowsPerPage, setRowsPerPage] = React.useState(10);
+    const [totalCount, setTotalCount] = React.useState(0);
 
-  return (
-    <Paper sx={{ width: "100%", overflow: "hidden", marginTop: 5 }}>
-      <TableContainer sx={{ maxHeight: 1000 }}>
-        <Table stickyHeader aria-label="sticky table">
-          <TableHead>
-            <TableRow>
-              {columns.map((column) => (
-                <TableCell key={column} align={"center"}>
-                  {column}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row, i) => {
+    // const { isLoading, fields, data, handleEdit, handleDelete } = props;
+
+    const changePageHandler = (event: unknown, newPage: number) => {
+      event;
+      setPage(newPage);
+      handleChangePage?.();
+    };
+
+    const handleChangeRowsPerPage = (
+      event: React.ChangeEvent<HTMLInputElement>
+    ) => {
+      setRowsPerPage(+event.target.value);
+      setPage(0);
+    };
+
+    React.useImperativeHandle(ref, () => {
+      return {
+        getPageSize: () => ({
+          page,
+          pageSize: rowsPerPage,
+        }),
+        setTotalCount: (totalCount: number) => {
+          setTotalCount(totalCount);
+        },
+      };
+    });
+    console.log(data);
+    return (
+      <Paper sx={{ width: "100%", overflow: "hidden", marginTop: 5 }}>
+        <TableContainer sx={{ maxHeight: 1000 }}>
+          <Table stickyHeader aria-label="sticky table">
+            <TableHead>
+              <TableRow>
+                {fields.map((field) => (
+                  <TableCell key={`Header-${field.key}`} align={"center"}>
+                    {field.label}
+                  </TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+            {!isLoading && <TableBody>
+              {data.map((row, i) => {
                 return (
                   <TableRow
                     hover
@@ -69,42 +87,33 @@ export default function CustomTable(props: Props) {
                     tabIndex={-1}
                     key={`table-row-${i}`}
                   >
-                    {row.slice(1).map((item, vi) => {
-                      if (item.type === "text")
+                    {fields.map((field) => {
+                      if (field.type === "actions") {
                         return (
-                          <TableCell
-                            key={`table-cell-${i}-${vi}`}
-                            align="center"
-                          >
-                            {item.value}
-                          </TableCell>
-                        );
-                      else if (item.type === "actions") {
-                        return (
-                          <TableCell
-                            key={`table-cell-${i}-${vi}`}
-                            align="center"
-                          >
+                          <TableCell key={row.id} align="center">
                             <Button onClick={handleEdit}>
-                              <input type="text" value={row[0].value} hidden />
+                              <input type="text" value={row.id} hidden />
                               <ModeEditOutlineIcon />
                             </Button>
                             <Button color="error" onClick={handleDelete}>
-                              <input type="text" value={row[0].value} hidden />
+                              <input type="text" value={row.id} hidden />
                               <DeleteOutlineIcon />
                             </Button>
                           </TableCell>
                         );
-                      } else if (item.type === "bool") {
+                      } else if (field.type === "checkbox") {
                         return (
-                          <TableCell
-                            key={`table-cell-${i}-${vi}`}
-                            align="center"
-                          >
+                          <TableCell key={row.id} align="center">
                             <Checkbox
-                              checked={item.value === "true"}
+                              checked={row[field.key]}
                               disabled={true}
                             />
+                          </TableCell>
+                        );
+                      } else {
+                        return (
+                          <TableCell key={row.id} align="center">
+                            {row[field.key]}
                           </TableCell>
                         );
                       }
@@ -112,20 +121,23 @@ export default function CustomTable(props: Props) {
                   </TableRow>
                 );
               })}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      {!isLoading && rows.length === 0 && <NoDataImage />}
-      {isLoading && <LoadingSpin />}
-      <TablePagination
-        rowsPerPageOptions={[7, 10, 25, 100]}
-        component="div"
-        count={rows.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
-    </Paper>
-  );
-}
+            </TableBody>}
+          </Table>
+        </TableContainer>
+        {!isLoading && data.length === 0 && <NoDataImage />}
+        {isLoading && <LoadingSpin />}
+        <TablePagination
+          rowsPerPageOptions={[7, 10, 25, 100]}
+          component="div"
+          count={totalCount}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={changePageHandler}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+      </Paper>
+    );
+  }
+);
+
+export default React.memo(CustomTable) as typeof CustomTable;
