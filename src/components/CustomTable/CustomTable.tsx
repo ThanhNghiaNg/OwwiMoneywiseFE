@@ -78,50 +78,52 @@ const CustomTable = React.forwardRef(
                 ))}
               </TableRow>
             </TableHead>
-            {!isLoading && <TableBody>
-              {data.map((row, i) => {
-                return (
-                  <TableRow
-                    hover
-                    role="checkbox"
-                    tabIndex={-1}
-                    key={`table-row-${i}`}
-                  >
-                    {fields.map((field) => {
-                      if (field.type === "actions") {
-                        return (
-                          <TableCell key={row.id} align="center">
-                            <Button onClick={handleEdit}>
-                              <input type="text" value={row.id} hidden />
-                              <ModeEditOutlineIcon />
-                            </Button>
-                            <Button color="error" onClick={handleDelete}>
-                              <input type="text" value={row.id} hidden />
-                              <DeleteOutlineIcon />
-                            </Button>
-                          </TableCell>
-                        );
-                      } else if (field.type === "checkbox") {
-                        return (
-                          <TableCell key={row.id} align="center">
-                            <Checkbox
-                              checked={row[field.key]}
-                              disabled={true}
-                            />
-                          </TableCell>
-                        );
-                      } else {
-                        return (
-                          <TableCell key={row.id} align="center">
-                            {row[field.key]}
-                          </TableCell>
-                        );
-                      }
-                    })}
-                  </TableRow>
-                );
-              })}
-            </TableBody>}
+            {!isLoading && (
+              <TableBody>
+                {data.map((row, i) => {
+                  return (
+                    <TableRow
+                      hover
+                      role="checkbox"
+                      tabIndex={-1}
+                      key={`table-row-${i}`}
+                    >
+                      {fields.map((field) => {
+                        if (field.type === "actions") {
+                          return (
+                            <TableCell key={row.id} align="center">
+                              <Button onClick={handleEdit}>
+                                <input type="text" value={row.id} hidden />
+                                <ModeEditOutlineIcon />
+                              </Button>
+                              <Button color="error" onClick={handleDelete}>
+                                <input type="text" value={row.id} hidden />
+                                <DeleteOutlineIcon />
+                              </Button>
+                            </TableCell>
+                          );
+                        } else if (field.type === "checkbox") {
+                          return (
+                            <TableCell key={row.id} align="center">
+                              <Checkbox
+                                checked={row[field.key]}
+                                disabled={true}
+                              />
+                            </TableCell>
+                          );
+                        } else {
+                          return (
+                            <TableCell key={row.id} align="center">
+                              {row[field.key]}
+                            </TableCell>
+                          );
+                        }
+                      })}
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            )}
           </Table>
         </TableContainer>
         {!isLoading && data.length === 0 && <NoDataImage />}
@@ -134,6 +136,12 @@ const CustomTable = React.forwardRef(
           page={page}
           onPageChange={changePageHandler}
           onRowsPerPageChange={handleChangeRowsPerPage}
+          nextIconButtonProps={{
+            style: isLoading ? { opacity: 0.5, pointerEvents: "none" } : {},
+          }}
+          backIconButtonProps={{
+            style: isLoading ? { opacity: 0.5, pointerEvents: "none" } : {},
+          }}
         />
       </Paper>
     );
