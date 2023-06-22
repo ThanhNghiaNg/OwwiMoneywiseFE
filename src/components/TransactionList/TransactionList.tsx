@@ -11,12 +11,14 @@ import { BASE_URL, EFormMode } from "../../constants";
 import useHttp from "../../hooks/useHttp";
 import ConfirmDialog from "../CommonDialog/ConfirmDialog";
 import dotStyleCurrency from "../../utils/common";
+import { ITableBaseRef } from "../../types/table.type";
 
 export default function TransactionList() {
   const [transactionList, setTransactionList] = useState([]);
   const [selectedId, setSelectedId] = useState<string>();
   const [reload, setReload] = useState(false);
 
+  const transactionTableRef = useRef<ITableBaseRef>(null);
   const transactionFormRef = useRef<IDialogBaseRef>(null);
   const transactionFormEditRef = useRef<IDialogBaseRef>(null);
   const transactionDeleteDialogRef = useRef<IDialogBaseRef>(null);
@@ -39,6 +41,7 @@ export default function TransactionList() {
     setSelectedId(id);
     transactionFormEditRef.current?.show();
   };
+
   const handleOpenDialogDelete = (
     event: React.MouseEvent<HTMLButtonElement>
   ) => {
@@ -51,7 +54,7 @@ export default function TransactionList() {
   };
 
   const handleDeleteTransaction = () => {
-    console.log(selectedId);
+    // console.log(selectedId);
     deleteTransaction(
       { url: `${BASE_URL}/transaction/delete/${selectedId}`, method: "DELETE" },
       () => {
@@ -62,25 +65,34 @@ export default function TransactionList() {
   };
 
   useEffect(() => {
-    getTransactionsList({ url: `${BASE_URL}/transaction/all` }, (data) => {
-      const handledData = data.map((item: any) => {
-        const fullData = {
-          ...item,
-          amount: dotStyleCurrency(item.amount),
-          partner: item.partner.name,
-          category: item.category.name,
-          type: item.type.name,
-          date: new Date(item.date).toLocaleDateString(),
-          id: item._id,
-        };
-        // console.log(fullData);
-        return fullData;
-      });
+    const { page, pageSize } = transactionTableRef.current?.getPageSize() || {};
 
-      setTransactionList(handledData);
-    });
+    getTransactionsList(
+      {
+        url: `${BASE_URL}/transaction/all?page=${
+          page + 1
+        }&pageSize=${pageSize}`,
+      },
+      (data) => {
+        transactionTableRef.current?.setTotalCount(data.totalCount);
+        const handledData = data.data.map((item: any) => {
+          const fullData = {
+            ...item,
+            amount: dotStyleCurrency(item.amount),
+            partner: item.partner.name,
+            category: item.category.name,
+            type: item.type.name,
+            date: new Date(item.date).toLocaleDateString(),
+            id: item._id,
+          };
+          return fullData;
+        });
+
+        setTransactionList(handledData);
+      }
+    );
   }, [reload]);
-  console.log(transactionList);
+  // console.log(transactionList);
   return (
     <div className="mt-10">
       <FormDialog title="New Transaction" ref={transactionFormRef}>
@@ -170,7 +182,9 @@ export default function TransactionList() {
         data={transactionList}
         isLoading={isLoadingTransactions}
         handleEdit={handleEdit}
+        handleChangePage={toggleReload}
         handleDelete={handleOpenDialogDelete}
+        ref={transactionTableRef}
       />
     </div>
   );
