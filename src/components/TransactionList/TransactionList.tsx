@@ -61,41 +61,6 @@ export default function TransactionList() {
     );
   };
 
-  const dataHandled = transactionList.map((item) => {
-    const keys = Object.keys(item);
-    return Object.values(item)
-      .map((value, i) => {
-        if (keys[i] === "isDone") {
-          return {
-            type: "bool",
-            value: String(value),
-          };
-        } else {
-          return {
-            type: "text",
-            value: String(value),
-          };
-        }
-      })
-      .concat([
-        {
-          type: "actions",
-          value: "",
-        },
-      ]);
-  });
-
-  const columns = [
-    "Price",
-    "Category",
-    "Date",
-    "Description",
-    "Done",
-    "Partner",
-    "Type",
-    "Actions",
-  ];
-
   useEffect(() => {
     getTransactionsList({ url: `${BASE_URL}/transaction/all` }, (data) => {
       const handledData = data.map((item: any) => {
@@ -106,18 +71,16 @@ export default function TransactionList() {
           category: item.category.name,
           type: item.type.name,
           date: new Date(item.date).toLocaleDateString(),
+          id: item._id,
         };
-
-        const sortedEntries = Object.entries(fullData).sort((a, b) =>
-          a[0].localeCompare(b[0])
-        );
-        return Object.fromEntries(sortedEntries);
+        // console.log(fullData);
+        return fullData;
       });
 
       setTransactionList(handledData);
     });
   }, [reload]);
-
+  console.log(transactionList);
   return (
     <div className="mt-10">
       <FormDialog title="New Transaction" ref={transactionFormRef}>
@@ -137,7 +100,6 @@ export default function TransactionList() {
         content="Are you sure to delete this transaction?"
         ref={transactionDeleteDialogRef}
       />
-
       <FormDialog title="New Transaction" ref={transactionFormEditRef}>
         <TransactionForm
           mode={EFormMode.UPDATE}
@@ -150,7 +112,6 @@ export default function TransactionList() {
           }}
         />
       </FormDialog>
-
       <FormDialog title="New Category" ref={categoryFormRef}>
         <CustomCategoryForm
           onCloseForm={() => {
@@ -158,7 +119,6 @@ export default function TransactionList() {
           }}
         />
       </FormDialog>
-
       <FormDialog title="New Partner" ref={partnerFormRef}>
         <CustomPartnerForm
           onCloseForm={() => {
@@ -166,7 +126,6 @@ export default function TransactionList() {
           }}
         />
       </FormDialog>
-
       <div className="flex justify-end gap-2">
         <Button
           variant="contained"
@@ -196,10 +155,20 @@ export default function TransactionList() {
           + Partner
         </Button>
       </div>
+
       <CustomTable
+        fields={[
+          { key: "amount", label: "Price" },
+          { key: "category", label: "Category" },
+          { key: "date", label: "Date" },
+          { key: "description", label: "Description" },
+          { key: "isDone", type: "checkbox", label: "Done" },
+          { key: "partner", label: "Partner" },
+          { key: "type", label: "Type" },
+          { key: "actions", type: "actions", label: "Actions" },
+        ]}
+        data={transactionList}
         isLoading={isLoadingTransactions}
-        columns={columns}
-        rows={dataHandled}
         handleEdit={handleEdit}
         handleDelete={handleOpenDialogDelete}
       />
