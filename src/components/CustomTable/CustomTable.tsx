@@ -102,42 +102,41 @@ const CustomTable = React.forwardRef(
                     <TableRow
                       hover
                       role="checkbox"
-                      tabIndex={-1}
-                      key={`table-row-${i}`}
+                      // tabIndex={-1}
+                      key={`${row.id}`}
                       style={{
                         backgroundColor: interleavedBackgroundColor,
                       }}
                     >
                       {fields.map((field) => {
+                        let cellContent = row[field.key];
+
                         if (field.type === "actions") {
-                          return (
-                            <TableCell key={row.id} align="center">
+                          cellContent = (
+                            <>
                               <Button onClick={handleEdit}>
-                                <input type="text" value={row.id} hidden />
+                                <input type="text" value={row.id} hidden onChange={(e)=>{console.log(e)}} />
                                 <ModeEditOutlineIcon />
                               </Button>
                               <Button color="error" onClick={handleDelete}>
-                                <input type="text" value={row.id} hidden />
+                                <input type="text" value={row.id} hidden onChange={(e)=>{console.log(e)}} />
                                 <DeleteOutlineIcon />
                               </Button>
-                            </TableCell>
+                            </>
                           );
                         } else if (field.type === "checkbox") {
-                          return (
-                            <TableCell key={row.id} align="center">
-                              <Checkbox
-                                checked={row[field.key]}
-                                disabled={true}
-                              />
-                            </TableCell>
-                          );
-                        } else {
-                          return (
-                            <TableCell key={row.id} align="center">
-                              {row[field.key]}
-                            </TableCell>
+                          cellContent = (
+                            <Checkbox
+                              checked={row[field.key]}
+                              disabled={true}
+                            />
                           );
                         }
+                        return (
+                          <TableCell key={field.key + '-' + row.id} align="center">
+                            {cellContent}
+                          </TableCell>
+                        );
                       })}
                     </TableRow>
                   );
