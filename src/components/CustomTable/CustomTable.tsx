@@ -17,9 +17,10 @@ type Props = {
   isLoading: boolean;
   fields: { key: string; type?: string; label: string }[];
   data: any[];
+  interleavedBackgroundFieldKey?: string;
   handleEdit: (event: React.MouseEvent<HTMLButtonElement>) => void;
   handleDelete: (event: React.MouseEvent<HTMLButtonElement>) => void;
-  handleChangePage: () => void;
+  handleChangePageInfo: () => void;
 };
 
 const CustomTable = React.forwardRef(
@@ -28,9 +29,10 @@ const CustomTable = React.forwardRef(
       isLoading,
       fields,
       data,
+      interleavedBackgroundFieldKey,
       handleEdit,
       handleDelete,
-      handleChangePage,
+      handleChangePageInfo,
     }: Props,
     ref
   ) => {
@@ -43,14 +45,16 @@ const CustomTable = React.forwardRef(
     const changePageHandler = (event: unknown, newPage: number) => {
       event;
       setPage(newPage);
-      handleChangePage?.();
+      handleChangePageInfo?.();
     };
 
     const handleChangeRowsPerPage = (
       event: React.ChangeEvent<HTMLInputElement>
     ) => {
+      console.log("pageNUm: ", event.target.value);
       setRowsPerPage(+event.target.value);
       setPage(0);
+      handleChangePageInfo?.();
     };
 
     React.useImperativeHandle(ref, () => {
@@ -64,7 +68,9 @@ const CustomTable = React.forwardRef(
         },
       };
     });
-    console.log(data);
+
+    let interleavedBackgroundColor = "#fff";
+
     return (
       <Paper sx={{ width: "100%", overflow: "hidden", marginTop: 5 }}>
         <TableContainer sx={{ maxHeight: 1000 }}>
@@ -81,43 +87,56 @@ const CustomTable = React.forwardRef(
             {!isLoading && (
               <TableBody>
                 {data.map((row, i) => {
+                  if (interleavedBackgroundFieldKey && i >= 1) {
+                    if (
+                      row[interleavedBackgroundFieldKey] !==
+                      data[i - 1][interleavedBackgroundFieldKey]
+                    ) {
+                      interleavedBackgroundColor =
+                        interleavedBackgroundColor === "#fff"
+                          ? "#f1f3f5"
+                          : "#fff";
+                    }
+                  }
                   return (
                     <TableRow
                       hover
                       role="checkbox"
-                      tabIndex={-1}
-                      key={`table-row-${i}`}
+                      // tabIndex={-1}
+                      key={`${row.id}`}
+                      style={{
+                        backgroundColor: interleavedBackgroundColor,
+                      }}
                     >
                       {fields.map((field) => {
+                        let cellContent = row[field.key];
+
                         if (field.type === "actions") {
-                          return (
-                            <TableCell key={row.id} align="center">
+                          cellContent = (
+                            <>
                               <Button onClick={handleEdit}>
-                                <input type="text" value={row.id} hidden />
+                                <input type="text" value={row.id} hidden onChange={(e)=>{console.log(e)}} />
                                 <ModeEditOutlineIcon />
                               </Button>
                               <Button color="error" onClick={handleDelete}>
-                                <input type="text" value={row.id} hidden />
+                                <input type="text" value={row.id} hidden onChange={(e)=>{console.log(e)}} />
                                 <DeleteOutlineIcon />
                               </Button>
-                            </TableCell>
+                            </>
                           );
                         } else if (field.type === "checkbox") {
-                          return (
-                            <TableCell key={row.id} align="center">
-                              <Checkbox
-                                checked={row[field.key]}
-                                disabled={true}
-                              />
-                            </TableCell>
-                          );
-                        } else {
-                          return (
-                            <TableCell key={row.id} align="center">
-                              {row[field.key]}
-                            </TableCell>
+                          cellContent = (
+                            <Checkbox
+                              checked={row[field.key]}
+                              disabled={true}
+                            />
                           );
                         }
+                        return (
+                          <TableCell key={field.key + '-' + row.id} align="center">
+                            {cellContent}
+                          </TableCell>
+                        );
                       })}
                     </TableRow>
                   );
