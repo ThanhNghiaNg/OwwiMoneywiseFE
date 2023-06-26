@@ -91,6 +91,7 @@ export default function TransactionList() {
         setTransactionList(handledData);
       }
     );
+    console.log("reload: ", reload);
   }, [reload]);
   // console.log(transactionList);
   return (
@@ -179,10 +180,11 @@ export default function TransactionList() {
           { key: "type", label: "Type" },
           { key: "actions", type: "actions", label: "Actions" },
         ]}
+        interleavedBackgroundFieldKey={"date"}
         data={transactionList}
         isLoading={isLoadingTransactions}
         handleEdit={handleEdit}
-        handleChangePage={toggleReload}
+        handleChangePageInfo={toggleReload}
         handleDelete={handleOpenDialogDelete}
         ref={transactionTableRef}
       />
