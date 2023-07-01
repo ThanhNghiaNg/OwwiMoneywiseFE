@@ -10,12 +10,15 @@ import CustomPartnerForm from "../Partner/CustomPartnerForm";
 import { BASE_URL, EFormMode } from "../../constants";
 import useHttp from "../../hooks/useHttp";
 import ConfirmDialog from "../CommonDialog/ConfirmDialog";
+import dotStyleCurrency from "../../utils/common";
+import { ITableBaseRef } from "../../types/table.type";
 
 export default function TransactionList() {
   const [transactionList, setTransactionList] = useState([]);
   const [selectedId, setSelectedId] = useState<string>();
   const [reload, setReload] = useState(false);
 
+  const transactionTableRef = useRef<ITableBaseRef>(null);
   const transactionFormRef = useRef<IDialogBaseRef>(null);
   const transactionFormEditRef = useRef<IDialogBaseRef>(null);
   const transactionDeleteDialogRef = useRef<IDialogBaseRef>(null);
@@ -38,6 +41,7 @@ export default function TransactionList() {
     setSelectedId(id);
     transactionFormEditRef.current?.show();
   };
+
   const handleOpenDialogDelete = (
     event: React.MouseEvent<HTMLButtonElement>
   ) => {
@@ -50,7 +54,7 @@ export default function TransactionList() {
   };
 
   const handleDeleteTransaction = () => {
-    console.log(selectedId);
+    // console.log(selectedId);
     deleteTransaction(
       { url: `${BASE_URL}/transaction/delete/${selectedId}`, method: "DELETE" },
       () => {
@@ -60,62 +64,36 @@ export default function TransactionList() {
     );
   };
 
-  const dataHandled = transactionList.map((item) => {
-    const keys = Object.keys(item);
-    return Object.values(item)
-      .map((value, i) => {
-        if (keys[i] === "isDone") {
-          return {
-            type: "bool",
-            value: String(value),
-          };
-        } else {
-          return {
-            type: "text",
-            value: String(value),
-          };
-        }
-      })
-      .concat([
-        {
-          type: "actions",
-          value: "",
-        },
-      ]);
-  });
-
-  const columns = [
-    "Price",
-    "Category",
-    "Date",
-    "Description",
-    "Done",
-    "Partner",
-    "Type",
-    "Actions",
-  ];
-
   useEffect(() => {
-    getTransactionsList({ url: `${BASE_URL}/transaction/all` }, (data) => {
-      const handledData = data.map((item: any) => {
-        const fullData = {
-          ...item,
-          partner: item.partner.name,
-          category: item.category.name,
-          type: item.type.name,
-          date: new Date(item.date).toLocaleDateString(),
-        };
+    const { page, pageSize } = transactionTableRef.current?.getPageSize() || {};
 
-        const sortedEntries = Object.entries(fullData).sort((a, b) =>
-          a[0].localeCompare(b[0])
-        );
-        return Object.fromEntries(sortedEntries);
-      });
+    getTransactionsList(
+      {
+        url: `${BASE_URL}/transaction/all?page=${
+          page + 1
+        }&pageSize=${pageSize}`,
+      },
+      (data) => {
+        transactionTableRef.current?.setTotalCount(data.totalCount);
+        const handledData = data.data.map((item: any) => {
+          const fullData = {
+            ...item,
+            amount: dotStyleCurrency(item.amount),
+            partner: item.partner.name,
+            category: item.category.name,
+            type: item.type.name,
+            date: new Date(item.date).toLocaleDateString(),
+            id: item._id,
+          };
+          return fullData;
+        });
 
-      setTransactionList(handledData);
-    });
+        setTransactionList(handledData);
+      }
+    );
+    console.log("reload: ", reload);
   }, [reload]);
-
+  // console.log(transactionList);
   return (
     <div className="mt-10">
       <FormDialog title="New Transaction" ref={transactionFormRef}>
@@ -135,7 +113,6 @@ export default function TransactionList() {
         content="Are you sure to delete this transaction?"
         ref={transactionDeleteDialogRef}
       />
-
       <FormDialog title="New Transaction" ref={transactionFormEditRef}>
         <TransactionForm
           mode={EFormMode.UPDATE}
@@ -148,7 +125,6 @@ export default function TransactionList() {
           }}
         />
       </FormDialog>
-
       <FormDialog title="New Category" ref={categoryFormRef}>
         <CustomCategoryForm
           onCloseForm={() => {
@@ -156,7 +132,6 @@ export default function TransactionList() {
           }}
         />
       </FormDialog>
-
       <FormDialog title="New Partner" ref={partnerFormRef}>
         <CustomPartnerForm
           onCloseForm={() => {
@@ -164,7 +139,6 @@ export default function TransactionList() {
           }}
         />
       </FormDialog>
-
       <div className="flex justify-end gap-2">
         <Button
           variant="contained"
@@ -194,12 +168,25 @@ export default function TransactionList() {
           + Partner
         </Button>
       </div>
+
       <CustomTable
+        fields={[
+          { key: "amount", label: "Price" },
+          { key: "category", label: "Category" },
+          { key: "date", label: "Date" },
+          { key: "description", label: "Description" },
+          { key: "isDone", type: "checkbox", label: "Done" },
+          { key: "partner", label: "Partner" },
+          { key: "type", label: "Type" },
+          { key: "actions", type: "actions", label: "Actions" },
+        ]}
+        interleavedBackgroundFieldKey={"date"}
+        data={transactionList}
         isLoading={isLoadingTransactions}
-        columns={columns}
-        rows={dataHandled}
         handleEdit={handleEdit}
+        handleChangePageInfo={toggleReload}
         handleDelete={handleOpenDialogDelete}
+        ref={transactionTableRef}
       />
     </div>
   );

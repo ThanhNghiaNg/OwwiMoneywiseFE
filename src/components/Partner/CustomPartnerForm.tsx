@@ -28,7 +28,6 @@ const CustomPartnerForm = (props: Props) => {
   const { sendRequest: createPartner } = useHttp();
 
   const onSubmit = () => {
-    console.log("Create Partner");
     createPartner(
       {
         url: `${BASE_URL}/partner/create`,

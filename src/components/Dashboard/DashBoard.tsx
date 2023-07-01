@@ -30,23 +30,30 @@ export default function DashBoard() {
     );
   }, []);
 
-  console.log(JSON.stringify(data["Outcome"]) === "{}");
-
   return (
     <>
       {isLoading && <LoadingSpin />}
       {!isLoading && data && (
         <Grid container spacing={2} columns={{ xs: 12 }}>
-          {/* <Grid item sm={12} xs={6}>
+          <Grid item md={12} xs={6}>
             <Item>
-              <PieChart
-                label={"Income"}
-                labels={Object.keys(data["Income"])}
-                data={Object.values(data["Income"])}
-              />
+              {Object.keys(data["Income"]).length > 0 ? (
+                <PieChart
+                  label={"Income"}
+                  labels={Object.keys(data["Income"])}
+                  data={Object.values(data["Income"])}
+                />
+              ) : (
+                <>
+                  <NoDataImage />
+                  <p className="text-lg mt-5">
+                    There is no data, create Transactions first!
+                  </p>
+                </>
+              )}
             </Item>
-          </Grid> */}
-          <Grid item xs={12}>
+          </Grid>
+          <Grid item md={12} xs={6}>
             <Item>
               {Object.keys(data["Outcome"]).length > 0 ? (
                 <PieChart
@@ -55,9 +62,21 @@ export default function DashBoard() {
                   data={Object.values(data["Outcome"])}
                 />
               ) : (
-                <NoDataImage />
+                <>
+                  <NoDataImage />
+                  <p className="text-lg mt-5">
+                    There is no data, create Transactions first!
+                  </p>
+                </>
               )}
             </Item>
+            {/* <div>
+              <h2>
+                {dotStyleCurrency(
+                  Object.values(data["Outcome"]).reduce((acc, v) => acc + v, 0)
+                )}
+              </h2>
+            </div> */}
           </Grid>
         </Grid>
       )}
