@@ -10,7 +10,6 @@ import {
   MenuItem,
   Select,
   SelectChangeEvent,
-  TextField,
 } from "@mui/material";
 
 function Dashboard() {
@@ -21,14 +20,14 @@ function Dashboard() {
     getOutComeStatistic(
       { url: `${BASE_URL}/user/dashboard/statistic/outcome?month=${month}` },
       (data) => {
-        console.log(data);
         setData(data);
       }
     );
   }, [month]);
-  const months = Array.from({ length: 12 }, (v, k) => k);
-  console.log(months);
-  console.log(month);
+  const months = Array.from({ length: 12 }, (v, k) => {
+    v;
+    return k;
+  });
   return (
     <div>
       <Box
