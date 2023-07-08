@@ -2,9 +2,6 @@ import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
 import { styled } from "@mui/material/styles";
 import { PieChart } from "../Charts/PieChart";
-import useHttp from "../../hooks/useHttp";
-import { useEffect, useState } from "react";
-import { BASE_URL } from "../../constants";
 import NoDataImage from "../UI/NoDataImage";
 import LoadingSpin from "../UI/LoadingSpin";
 
@@ -16,20 +13,12 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-export default function DashBoard() {
-  const [data, setData] = useState({ Income: {}, Outcome: {} });
-  const { sendRequest: getOutComeStatistic, isLoading } = useHttp();
+type DashboardProps = {
+  data: any;
+  isLoading: boolean;
+};
 
-  useEffect(() => {
-    getOutComeStatistic(
-      { url: `${BASE_URL}/user/dashboard/statistic/outcome` },
-      (data) => {
-        console.log(data);
-        setData(data);
-      }
-    );
-  }, []);
-
+export default function DashBoard({ data, isLoading }: DashboardProps) {
   return (
     <>
       {isLoading && <LoadingSpin />}
