@@ -78,7 +78,11 @@ const CustomTable = React.forwardRef(
             <TableHead>
               <TableRow>
                 {fields.map((field) => (
-                  <TableCell key={`Header-${field.key}`} align={"center"}>
+                  <TableCell
+                    key={`Header-${field.key}`}
+                    align={"center"}
+                    sx={{ backgroundColor: "#e0e0e0" }}
+                  >
                     {field.label}
                   </TableCell>
                 ))}
@@ -115,11 +119,25 @@ const CustomTable = React.forwardRef(
                           cellContent = (
                             <>
                               <Button onClick={handleEdit}>
-                                <input type="text" value={row.id} hidden onChange={(e)=>{console.log(e)}} />
+                                <input
+                                  type="text"
+                                  value={row.id}
+                                  hidden
+                                  onChange={(e) => {
+                                    console.log(e);
+                                  }}
+                                />
                                 <ModeEditOutlineIcon />
                               </Button>
                               <Button color="error" onClick={handleDelete}>
-                                <input type="text" value={row.id} hidden onChange={(e)=>{console.log(e)}} />
+                                <input
+                                  type="text"
+                                  value={row.id}
+                                  hidden
+                                  onChange={(e) => {
+                                    console.log(e);
+                                  }}
+                                />
                                 <DeleteOutlineIcon />
                               </Button>
                             </>
@@ -133,7 +151,10 @@ const CustomTable = React.forwardRef(
                           );
                         }
                         return (
-                          <TableCell key={field.key + '-' + row.id} align="center">
+                          <TableCell
+                            key={field.key + "-" + row.id}
+                            align="center"
+                          >
                             {cellContent}
                           </TableCell>
                         );
