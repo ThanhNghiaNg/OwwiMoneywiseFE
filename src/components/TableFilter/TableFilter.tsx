@@ -104,7 +104,7 @@ export default function TableFilter({ callBackSearch }: Props) {
             }}
           >
             {fetchedTypes.map((type: IType) => {
-              return <MenuItem value={type._id}>{type.name}</MenuItem>;
+              return <MenuItem value={type._id} key={type._id}>{type.name}</MenuItem>;
             })}
             {/* <MenuItem value={"income"}>Income</MenuItem>
               <MenuItem value={"expense"}>Expense</MenuItem> */}
@@ -122,7 +122,7 @@ export default function TableFilter({ callBackSearch }: Props) {
             }}
           >
             {fetchedPartners.map((category: ICategory) => {
-              return <MenuItem value={category._id}>{category.name}</MenuItem>;
+              return <MenuItem value={category._id} key={category._id}>{category.name}</MenuItem>;
             })}
           </Select>
         </FormControl>
@@ -138,7 +138,7 @@ export default function TableFilter({ callBackSearch }: Props) {
             }}
           >
             {fetchedCategories.map((category: ICategory) => {
-              return <MenuItem value={category._id}>{category.name}</MenuItem>;
+              return <MenuItem value={category._id} key={category._id}>{category.name}</MenuItem>;
             })}
           </Select>
         </FormControl>

@@ -16,6 +16,7 @@ import TableFilter from "../TableFilter/TableFilter";
 
 export default function TransactionList() {
   const [transactionList, setTransactionList] = useState([]);
+  const [totalAmount, setTotalAmount] = useState(0);
   const [selectedId, setSelectedId] = useState<string>();
   const [filter, setFilter] = useState({});
   const [reload, setReload] = useState(false);
@@ -83,7 +84,9 @@ export default function TransactionList() {
       },
       (data) => {
         transactionTableRef.current?.setTotalCount(data.totalCount);
+        let total = 0;
         const handledData = data.data.map((item: any) => {
+          total+= item.amount;
           const fullData = {
             ...item,
             amount: dotStyleCurrency(item.amount),
@@ -95,7 +98,7 @@ export default function TransactionList() {
           };
           return fullData;
         });
-
+        setTotalAmount(total);
         setTransactionList(handledData);
       }
     );
@@ -192,6 +195,7 @@ export default function TransactionList() {
         ]}
         interleavedBackgroundFieldKey={"date"}
         data={transactionList}
+        totalAmount={totalAmount}
         isLoading={isLoadingTransactions}
         handleEdit={handleEdit}
         handleChangePageInfo={toggleReload}
