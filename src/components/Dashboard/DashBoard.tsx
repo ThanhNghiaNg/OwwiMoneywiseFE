@@ -18,6 +18,7 @@ const Item = styled(Paper)(({ theme }) => ({
 
 export default function DashBoard() {
   const [data, setData] = useState({ Income: {}, Outcome: {} });
+  const [month, setMonth] = useState(new Date().getMonth());
   const { sendRequest: getOutComeStatistic, isLoading } = useHttp();
 
   useEffect(() => {
