@@ -12,10 +12,13 @@ import useHttp from "../../hooks/useHttp";
 import ConfirmDialog from "../CommonDialog/ConfirmDialog";
 import dotStyleCurrency from "../../utils/common";
 import { ITableBaseRef } from "../../types/table.type";
+import TableFilter from "../TableFilter/TableFilter";
 
 export default function TransactionList() {
   const [transactionList, setTransactionList] = useState([]);
+  const [totalAmount, setTotalAmount] = useState(0);
   const [selectedId, setSelectedId] = useState<string>();
+  const [filter, setFilter] = useState({});
   const [reload, setReload] = useState(false);
 
   const transactionTableRef = useRef<ITableBaseRef>(null);
@@ -64,18 +67,26 @@ export default function TransactionList() {
     );
   };
 
+  const changeFilterHandler = (filter: any) => {
+    setFilter(filter);
+  };
+
   useEffect(() => {
     const { page, pageSize } = transactionTableRef.current?.getPageSize() || {};
-
+    console.log("filter: ", filter);
     getTransactionsList(
       {
         url: `${BASE_URL}/transaction/all?page=${
           page + 1
         }&pageSize=${pageSize}`,
+        method: "POST",
+        body: JSON.stringify(filter),
       },
       (data) => {
         transactionTableRef.current?.setTotalCount(data.totalCount);
+        let total = 0;
         const handledData = data.data.map((item: any) => {
+          total+= item.amount;
           const fullData = {
             ...item,
             amount: dotStyleCurrency(item.amount),
@@ -87,12 +98,12 @@ export default function TransactionList() {
           };
           return fullData;
         });
-
+        setTotalAmount(total);
         setTransactionList(handledData);
       }
     );
     console.log("reload: ", reload);
-  }, [reload]);
+  }, [reload, filter]);
   // console.log(transactionList);
   return (
     <div className="mt-10">
@@ -169,11 +180,13 @@ export default function TransactionList() {
         </Button>
       </div>
 
+      <TableFilter callBackSearch={changeFilterHandler} />
+
       <CustomTable
         fields={[
-          { key: "amount", label: "Price" },
-          { key: "category", label: "Category" },
           { key: "date", label: "Date" },
+          { key: "category", label: "Category" },
+          { key: "amount", label: "Price" },
           { key: "description", label: "Description" },
           { key: "isDone", type: "checkbox", label: "Done" },
           { key: "partner", label: "Partner" },
@@ -182,6 +195,7 @@ export default function TransactionList() {
         ]}
         interleavedBackgroundFieldKey={"date"}
         data={transactionList}
+        totalAmount={totalAmount}
         isLoading={isLoadingTransactions}
         handleEdit={handleEdit}
         handleChangePageInfo={toggleReload}
