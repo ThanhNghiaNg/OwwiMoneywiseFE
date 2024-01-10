@@ -6,6 +6,7 @@ import useHttp from "../../hooks/useHttp";
 import { useDispatch } from "react-redux";
 import { authActions } from "../../store/authSlice";
 import LoadingSpin from "../UI/LoadingSpin";
+import Cookie from 'js-cookie';
 
 type Props = { isLogin: boolean };
 
@@ -38,6 +39,7 @@ export default function AuthForm({ isLogin }: Props) {
       (data) => {
         console.log(data);
         if (isLogin) {
+          Cookie.set('sessionToken', data.sessionToken, { expires: 60 });
           dispatch(authActions.login({ token: data.token }));
           navigate("/");
         } else {
