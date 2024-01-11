@@ -53,7 +53,7 @@ const CustomTable = React.forwardRef(
     const handleChangeRowsPerPage = (
       event: React.ChangeEvent<HTMLInputElement>
     ) => {
-      console.log("pageNUm: ", event.target.value);
+      // console.log("pageNUm: ", event.target.value);
       setRowsPerPage(+event.target.value);
       setPage(0);
       handleChangePageInfo?.();

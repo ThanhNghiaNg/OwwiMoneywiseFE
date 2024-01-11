@@ -11,7 +11,7 @@ type Props = {
 export function PieChart(props: Props) {
   ChartJS.register(ArcElement, Tooltip, Legend);
   const { label, labels, data } = props;
-  console.log(labels, data);
+  
   const len = labels.length;
   const dataDisplay = {
     labels: labels,

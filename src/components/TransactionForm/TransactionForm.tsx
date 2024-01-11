@@ -61,7 +61,6 @@ const TransactionForm = (props: Props & FormMode) => {
       date,
       isDone,
     };
-    console.log(data);
     submitTransactions(
       {
         url: `${BASE_URL}/transaction/${
@@ -83,7 +82,7 @@ const TransactionForm = (props: Props & FormMode) => {
       setFetchedTypes(data);
     });
     if (id) {
-      console.log(id);
+      // console.log(id);
       getTransaction({ url: `${BASE_URL}/transaction/${id}` }, (data) => {
         const fetchedData = data[0];
         setType(fetchedData.type._id);
