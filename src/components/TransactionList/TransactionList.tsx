@@ -57,7 +57,6 @@ export default function TransactionList() {
   };
 
   const handleDeleteTransaction = () => {
-    // console.log(selectedId);
     deleteTransaction(
       { url: `${BASE_URL}/transaction/delete/${selectedId}`, method: "DELETE" },
       () => {
@@ -73,7 +72,7 @@ export default function TransactionList() {
 
   useEffect(() => {
     const { page, pageSize } = transactionTableRef.current?.getPageSize() || {};
-    console.log("filter: ", filter);
+    
     getTransactionsList(
       {
         url: `${BASE_URL}/transaction/all?page=${
@@ -102,9 +101,8 @@ export default function TransactionList() {
         setTransactionList(handledData);
       }
     );
-    console.log("reload: ", reload);
   }, [reload, filter]);
-  // console.log(transactionList);
+
   return (
     <div className="mt-10">
       <FormDialog title="New Transaction" ref={transactionFormRef}>
