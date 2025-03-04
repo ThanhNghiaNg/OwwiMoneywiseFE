@@ -34,11 +34,11 @@ function Dashboard() {
         sx={{
           flexGrow: 1,
           marginTop: 10,
-          paddingInline: { xs: 2, sm: 5, lg: 25 },
+          paddingInline: { xs: 1, mb: 2, sm: 5, lg: 25 },
         }}
       >
-        <div className="flex justify-end">
-          <div className="mr-4 w-1/6">
+        <div className="flex sm:justify-end">
+          <div className="mr-4 w-52">
             <FormControl fullWidth>
               <InputLabel id="month">Select Month</InputLabel>
               <Select

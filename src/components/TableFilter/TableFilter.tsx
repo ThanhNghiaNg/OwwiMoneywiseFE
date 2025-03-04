@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   Checkbox,
+  Drawer,
   FormControl,
   FormControlLabel,
   InputLabel,
@@ -10,15 +11,17 @@ import {
   SelectChangeEvent,
   TextField,
 } from "@mui/material";
-import React from "react";
+import React, { useCallback, useState } from "react";
 import useHttp from "../../hooks/useHttp";
 import { BASE_URL } from "../../constants";
 import { IType } from "../Category/CustomCategoryForm";
 import { ICategory } from "../TransactionForm/TransactionForm";
+import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
 
-type Props = { callBackSearch?: (filter: any) => void };
+type Props = { callBackSearch?: (filter: any) => void, onCloseDrawer?: ()=>void };
 
-export default function TableFilter({ callBackSearch }: Props) {
+function TableFilter({ callBackSearch, onCloseDrawer }: Props) {
+
   const [type, setType] = React.useState("");
   const [partner, setPartner] = React.useState("");
   const [category, setCategory] = React.useState("");
@@ -30,7 +33,7 @@ export default function TableFilter({ callBackSearch }: Props) {
   const [fetchedTypes, setFetchedTypes] = React.useState([]);
   const [fetchedPartners, setFetchedPartners] = React.useState([]);
   const [fetchedCategories, setFetchedCategories] = React.useState([]);
-  
+
   const { sendRequest: getCategories } = useHttp();
   // const { sendRequest: getTransaction, isLoading: isLoadingTransaction } =
   useHttp();
@@ -48,6 +51,7 @@ export default function TableFilter({ callBackSearch }: Props) {
       isDone,
     };
     callBackSearch?.(data);
+    onCloseDrawer?.();
     // console.log(data);
     // searchTransactions(
     //   {
@@ -89,9 +93,12 @@ export default function TableFilter({ callBackSearch }: Props) {
       setFetchedPartners(data);
     });
   }, [type]);
+
+
+
   return (
-    <Box>
-      <div className="grid grid-cols-3 gap-4 pt-3">
+    <Box >
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 pt-3">
         <FormControl fullWidth>
           <InputLabel id="type">Type</InputLabel>
           <Select
@@ -191,6 +198,35 @@ export default function TableFilter({ callBackSearch }: Props) {
           Search
         </Button>
       </Box>
-    </Box>
+    </Box >
   );
+}
+
+export default function TableFilterResponsive({ callBackSearch }: Props) {
+  const [isFilterOpen, setIsFilterOpen] = useState(false)
+  const toggleFilter = useCallback(() => setIsFilterOpen(prev => !prev), [])
+  const onOffFilter = useCallback(() => setIsFilterOpen(false), [])
+
+  return (
+    <>
+      <div className="flex justify-end mt-3 sm:hidden">
+        <Button onClick={toggleFilter}>
+          <FilterAltOutlinedIcon />
+        </Button>
+      </div>
+      <Drawer
+        anchor="top"
+        open={isFilterOpen}
+        onClose={onOffFilter}
+      >
+        <div className="mx-4 my-3">
+          <h2 className="text-2xl">Filter Transactions</h2>
+          <TableFilter callBackSearch={callBackSearch} onCloseDrawer={onOffFilter}/>
+        </div>
+      </Drawer>
+      <div className="hidden sm:block">
+        <TableFilter callBackSearch={callBackSearch} />
+      </div>
+    </>
+  )
 }

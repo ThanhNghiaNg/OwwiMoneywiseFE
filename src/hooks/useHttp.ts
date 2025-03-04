@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { HookConfig } from "../types/hook.type";
 
 function useHttp() {
@@ -20,10 +20,10 @@ function useHttp() {
         headers: config.headers
           ? config.headers
           : {
-              "Content-Type": "application/json",
-              Accept: "application/json, image/*",
-              Bearer: localStorage.getItem("sessionToken") || "",
-            },
+            "Content-Type": "application/json",
+            Accept: "application/json, image/*",
+            Bearer: localStorage.getItem("sessionToken") || "",
+          },
         body: config.body ? config.body : null,
         credentials: "include",
       });
@@ -46,6 +46,13 @@ function useHttp() {
     controller.abort();
     setIsLoading(false);
   };
+
+  useEffect(() => {
+    setTimeout(() => {
+      controller.abort();
+      setIsLoading(false);
+    }, 15000);
+  }, [])
 
   return {
     error,

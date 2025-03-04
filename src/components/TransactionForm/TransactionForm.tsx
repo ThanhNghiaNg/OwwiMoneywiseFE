@@ -110,10 +110,10 @@ const TransactionForm = (props: Props & FormMode) => {
 
   return (
     <>
-      <DialogContent sx={{ minWidth: "500px" }}>
+      <DialogContent sx={{ minWidth: "360px" }}>
         {isLoadingTransaction && <LoadingSpin />}
         {!isLoadingTransaction && (
-          <div className="grid grid-cols-3 gap-4 pt-3">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 pt-3">
             <FormControl fullWidth>
               <InputLabel id="type">Type</InputLabel>
               <Select

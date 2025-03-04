@@ -74,7 +74,7 @@ const CustomTable = React.forwardRef(
     let interleavedBackgroundColor = "#fff";
 
     return (
-      <Paper sx={{ width: "100%", overflow: "hidden", marginTop: 5 }}>
+      <Paper sx={{ width: "100%", overflow: "hidden", marginTop: 3 }}>
         <TableContainer sx={{ maxHeight: 1000 }}>
           <Table stickyHeader aria-label="sticky table">
             <TableHead>

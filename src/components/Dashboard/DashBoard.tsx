@@ -24,7 +24,7 @@ export default function DashBoard({ data, isLoading }: DashboardProps) {
       {isLoading && <LoadingSpin />}
       {!isLoading && data && (
         <Grid container spacing={2} columns={{ xs: 12 }}>
-          <Grid item md={12} xs={6}>
+          <Grid item className="w-full sm:w-1/2">
             <Item>
               {Object.keys(data["Income"]).length > 0 ? (
                 <PieChart
@@ -42,7 +42,7 @@ export default function DashBoard({ data, isLoading }: DashboardProps) {
               )}
             </Item>
           </Grid>
-          <Grid item md={12} xs={6}>
+          <Grid item className="w-full sm:w-1/2">
             <Item>
               {Object.keys(data["Outcome"]).length > 0 ? (
                 <PieChart
