@@ -58,6 +58,7 @@ export default function AuthForm({ isLogin }: Props) {
       className="grid grid-cols-1 gap-4 w-80 mx-auto border border-600 rounded p-6 mt-20 shadow-lg shadow-lg shadow-slate-500/50"
       onSubmit={handleSubmit}
     >
+      <div>{location.href}</div>
       <FormControl fullWidth>
         <TextField
           id="username"
