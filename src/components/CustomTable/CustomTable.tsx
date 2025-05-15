@@ -7,7 +7,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-import { Button, Checkbox } from "@mui/material";
+import { Box, Button, Checkbox } from "@mui/material";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import ModeEditOutlineIcon from "@mui/icons-material/ModeEditOutline";
 import NoDataImage from "../UI/NoDataImage";
@@ -75,7 +75,23 @@ const CustomTable = React.forwardRef(
 
     return (
       <Paper sx={{ width: "100%", overflow: "hidden", marginTop: 3 }}>
-        <TableContainer sx={{ maxHeight: 1000 }}>
+        <TablePagination
+          rowsPerPageOptions={[7, 10, 25, 100]}
+          component="div"
+          count={totalCount}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={changePageHandler}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+          nextIconButtonProps={{
+            style: isLoading ? { opacity: 0.5, pointerEvents: "none" } : {},
+          }}
+          backIconButtonProps={{
+            style: isLoading ? { opacity: 0.5, pointerEvents: "none" } : {},
+          }}
+        />
+        
+        <TableContainer>
           <Table stickyHeader aria-label="sticky table">
             <TableHead>
               <TableRow>
@@ -186,7 +202,7 @@ const CustomTable = React.forwardRef(
             )}
           </Table>
         </TableContainer>
-        {!isLoading && data.length === 0 && <NoDataImage />}
+        {!isLoading && data.length === 0 && <Box className="flex justify-center"><NoDataImage className="w-fit h-32" /></Box>}
         {isLoading && <LoadingSpin />}
 
         <TablePagination

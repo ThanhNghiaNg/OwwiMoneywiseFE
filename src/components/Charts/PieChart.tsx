@@ -34,6 +34,8 @@ export function PieChart(props: Props) {
     responsive: true,
     plugins: {
       legend: {
+        position: "right",
+        rtl: true,
         labels: {
           padding: 10,
           boxWidth: 15,

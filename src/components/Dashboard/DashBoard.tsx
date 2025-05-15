@@ -26,24 +26,6 @@ export default function DashBoard({ data, isLoading }: DashboardProps) {
         <Grid container spacing={2} columns={{ xs: 12 }}>
           <Grid item className="w-full sm:w-1/2">
             <Item>
-              {Object.keys(data["Income"]).length > 0 ? (
-                <PieChart
-                  label={"Income"}
-                  labels={Object.keys(data["Income"])}
-                  data={Object.values(data["Income"])}
-                />
-              ) : (
-                <>
-                  <NoDataImage />
-                  <p className="text-lg mt-5">
-                    There is no data, create Transactions first!
-                  </p>
-                </>
-              )}
-            </Item>
-          </Grid>
-          <Grid item className="w-full sm:w-1/2">
-            <Item>
               {Object.keys(data["Outcome"]).length > 0 ? (
                 <PieChart
                   label={"Expense"}
@@ -66,6 +48,24 @@ export default function DashBoard({ data, isLoading }: DashboardProps) {
                 )}
               </h2>
             </div> */}
+          </Grid>
+          <Grid item className="w-full sm:w-1/2">
+            <Item>
+              {Object.keys(data["Income"]).length > 0 ? (
+                <PieChart
+                  label={"Income"}
+                  labels={Object.keys(data["Income"])}
+                  data={Object.values(data["Income"])}
+                />
+              ) : (
+                <>
+                  <NoDataImage />
+                  <p className="text-lg mt-5">
+                    There is no Income, create Transactions first!
+                  </p>
+                </>
+              )}
+            </Item>
           </Grid>
         </Grid>
       )}
