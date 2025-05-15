@@ -3,4 +3,6 @@ export type HookConfig = {
     method?: string;
     headers?: HeadersInit;
     body?: BodyInit;
+    cache?: boolean;
+    removeCache?: boolean;
 }

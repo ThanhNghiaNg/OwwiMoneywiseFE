@@ -33,6 +33,7 @@ const CustomPartnerForm = (props: Props) => {
         url: `${BASE_URL}/partner/create`,
         body: JSON.stringify({ name, type, address }),
         method: "POST",
+        removeCache: true,
       },
       () => {
         handleClose();
@@ -41,7 +42,7 @@ const CustomPartnerForm = (props: Props) => {
   };
 
   React.useEffect(() => {
-    getTypes({ url: `${BASE_URL}/user/type/all` }, (data) => {
+    getTypes({ url: `${BASE_URL}/user/type/all`, cache: true }, (data) => {
       setFetchedTypes(data);
     });
   }, []);

@@ -37,6 +37,7 @@ const CustomCategoryForm = (props: Props) => {
         url: `${BASE_URL}/category/create`,
         method: "POST",
         body: JSON.stringify({ name, type }),
+        removeCache: true,
       },
       () => {
         handleClose();
@@ -45,7 +46,7 @@ const CustomCategoryForm = (props: Props) => {
   };
 
   React.useEffect(() => {
-    getTypes({ url: `${BASE_URL}/user/type/all` }, (data) => {
+    getTypes({ url: `${BASE_URL}/user/type/all`, cache: true }, (data) => {
       setFetchedTypes(data);
     });
   }, []);

@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { HookConfig } from "../types/hook.type";
 
+const cacheHttpRequest = new Map<string, any>();
+
 function useHttp() {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -10,6 +12,16 @@ function useHttp() {
     config: HookConfig,
     onSuccess?: (data: any) => void
   ) => {
+    const keyRequest = JSON.stringify(config);
+    if (config.cache && cacheHttpRequest.has(keyRequest)) {
+      const cachedResponse = cacheHttpRequest.get(keyRequest);
+      if (cachedResponse) {
+        setIsLoading(false);
+        setError(null);
+        onSuccess?.(cachedResponse);
+        return
+      }
+    }
     try {
       setIsLoading(true);
       setError(null);
@@ -32,6 +44,9 @@ function useHttp() {
       if (response.status >= 200 && response.status < 300) {
         if (onSuccess) {
           onSuccess(data);
+          if (config.cache){
+            cacheHttpRequest.set(keyRequest, data);
+          }
         }
       } else {
         setError(data.message);

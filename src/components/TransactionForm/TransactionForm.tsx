@@ -78,7 +78,7 @@ const TransactionForm = (props: Props & FormMode) => {
   };
 
   React.useEffect(() => {
-    getTypes({ url: `${BASE_URL}/user/type/all` }, (data) => {
+    getTypes({ url: `${BASE_URL}/user/type/all`, cache: true }, (data) => {
       setFetchedTypes(data);
     });
     if (id) {
@@ -98,12 +98,12 @@ const TransactionForm = (props: Props & FormMode) => {
 
   React.useEffect(() => {
     getCategories(
-      { url: `${BASE_URL}/category/all?typeId=${type}` },
+      { url: `${BASE_URL}/category/all?typeId=${type}`, cache: true },
       (data) => {
         setFetchedCategories(data);
-      }
+      },
     );
-    getPartners({ url: `${BASE_URL}/partner/all?typeId=${type}` }, (data) => {
+    getPartners({ url: `${BASE_URL}/partner/all?typeId=${type}`, cache: true }, (data) => {
       setFetchedPartners(data);
     });
   }, [type]);

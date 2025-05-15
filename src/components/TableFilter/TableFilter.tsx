@@ -18,7 +18,7 @@ import { IType } from "../Category/CustomCategoryForm";
 import { ICategory } from "../TransactionForm/TransactionForm";
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
 
-type Props = { callBackSearch?: (filter: any) => void, onCloseDrawer?: ()=>void };
+type Props = { callBackSearch?: (filter: any) => void, onCloseDrawer?: () => void };
 
 function TableFilter({ callBackSearch, onCloseDrawer }: Props) {
 
@@ -77,19 +77,19 @@ function TableFilter({ callBackSearch, onCloseDrawer }: Props) {
   };
 
   React.useEffect(() => {
-    getTypes({ url: `${BASE_URL}/user/type/all` }, (data) => {
+    getTypes({ url: `${BASE_URL}/user/type/all`, cache: true }, (data) => {
       setFetchedTypes(data);
     });
   }, []);
 
   React.useEffect(() => {
     getCategories(
-      { url: `${BASE_URL}/category/all?typeId=${type}` },
+      { url: `${BASE_URL}/category/all?typeId=${type}`, cache: true },
       (data) => {
         setFetchedCategories(data);
       }
     );
-    getPartners({ url: `${BASE_URL}/partner/all?typeId=${type}` }, (data) => {
+    getPartners({ url: `${BASE_URL}/partner/all?typeId=${type}`, cache: true }, (data) => {
       setFetchedPartners(data);
     });
   }, [type]);
@@ -221,7 +221,7 @@ export default function TableFilterResponsive({ callBackSearch }: Props) {
       >
         <div className="mx-4 my-3">
           <h2 className="text-2xl">Filter Transactions</h2>
-          <TableFilter callBackSearch={callBackSearch} onCloseDrawer={onOffFilter}/>
+          <TableFilter callBackSearch={callBackSearch} onCloseDrawer={onOffFilter} />
         </div>
       </Drawer>
       <div className="hidden sm:block">
