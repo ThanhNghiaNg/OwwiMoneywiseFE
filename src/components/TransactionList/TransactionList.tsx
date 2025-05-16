@@ -122,7 +122,7 @@ export default function TransactionList() {
         content="Are you sure to delete this transaction?"
         ref={transactionDeleteDialogRef}
       />
-      <FormDialog title="New Transaction" ref={transactionFormEditRef}>
+      <FormDialog title="Edit Transaction" ref={transactionFormEditRef}>
         <TransactionForm
           mode={EFormMode.UPDATE}
           id={selectedId}

@@ -53,7 +53,7 @@ const CustomCategoryForm = (props: Props) => {
 
   return (
     <div>
-      <DialogContent sx={{minWidth: "360px"}}>
+      <DialogContent sx={{minWidth: "300px"}}>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 pt-3">
           <FormControl fullWidth>
             <TextField
