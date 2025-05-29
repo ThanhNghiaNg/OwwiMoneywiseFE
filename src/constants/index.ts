@@ -18,6 +18,8 @@ export const PASTEL_COLORS = [
 
 export const BASE_URL = import.meta.env.VITE_DEPLOY_SERVER_URL || '';
 
+export const G_SITE_KEY = import.meta.env.VITE_G_SITE || '';
+
 export const QUERY_CACHE_TIME_DEFAULT = 5 * 60 * 100; // 5 minutes
 
 export enum EFormMode {

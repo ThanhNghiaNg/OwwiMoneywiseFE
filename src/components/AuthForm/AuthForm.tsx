@@ -1,12 +1,13 @@
 import { Button, FormControl, TextField } from "@mui/material";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { BASE_URL, HREFS } from "../../constants";
+import { BASE_URL, G_SITE_KEY, HREFS } from "../../constants";
 import useHttp from "../../hooks/useHttp";
 import { useDispatch } from "react-redux";
 import { authActions } from "../../store/authSlice";
 import LoadingSpin from "../UI/LoadingSpin";
 import Cookie from "js-cookie";
+import { grecaptcha } from "../../utils/grecaptcha";
 
 type Props = { isLogin: boolean };
 
@@ -22,35 +23,50 @@ export default function AuthForm({ isLogin }: Props) {
   const [success, setSuccess] = useState<string>("");
 
   const { sendRequest, error, isLoading } = useHttp();
-
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    sendRequest(
-      {
-        url: `${BASE_URL}/${isLogin ? "login" : "register"}`,
-        method: "POST",
-        body: JSON.stringify({
-          username,
-          password,
-          role: "user",
-          ...(isLogin ? {} : { fullName, email, phone, address }),
-        }),
-      },
-      (data) => {
-        if (isLogin) {
-          localStorage.setItem("sessionToken", data.sessionToken);
-          Cookie.set("sessionToken", data.sessionToken, { expires: 60 });
-          dispatch(authActions.login({ token: data.token }));
-          navigate("/");
-        } else {
-          setSuccess("Register Successfully!");
-          setTimeout(() => {
-            navigate("/login");
-            setSuccess("");
-          }, 1500);
+
+    const request = (recaptchaToken?: string) => {
+      sendRequest(
+        {
+          url: `${BASE_URL}/${isLogin ? "login" : "register"}`,
+          method: "POST",
+          body: JSON.stringify({
+            username,
+            password,
+            role: "user",
+            recaptchaToken,
+            ...(isLogin ? {} : { fullName, email, phone, address }),
+          }),
+        },
+        (data) => {
+          if (isLogin) {
+            localStorage.setItem("sessionToken", data.sessionToken);
+            Cookie.set("sessionToken", data.sessionToken, { expires: 60 });
+            dispatch(authActions.login({ token: data.token }));
+            navigate("/");
+          } else {
+            setSuccess("Register Successfully!");
+            setTimeout(() => {
+              navigate("/login");
+              setSuccess("");
+            }, 1500);
+          }
         }
-      }
-    );
+      );
+    }
+
+
+    if (grecaptcha) {
+      grecaptcha.ready(function () {
+        grecaptcha.execute(G_SITE_KEY, { action: 'register' })
+          .then(function (token: string) {
+            request(token);
+          });
+      });
+    } else {
+      request();
+    }
   };
 
   return (

@@ -1,0 +1,1 @@
+export const grecaptcha = window.grecaptcha ? window.grecaptcha : null;
