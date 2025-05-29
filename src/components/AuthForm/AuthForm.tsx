@@ -1,13 +1,13 @@
 import { Button, FormControl, TextField } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { BASE_URL, G_SITE_KEY, HREFS } from "../../constants";
+import { BASE_URL, HREFS } from "../../constants";
 import useHttp from "../../hooks/useHttp";
 import { useDispatch } from "react-redux";
 import { authActions } from "../../store/authSlice";
 import LoadingSpin from "../UI/LoadingSpin";
 import Cookie from "js-cookie";
-import { grecaptcha } from "../../utils/grecaptcha";
+import grecaptcha from "../../utils/grecaptcha";
 
 type Props = { isLogin: boolean };
 
@@ -23,7 +23,7 @@ export default function AuthForm({ isLogin }: Props) {
   const [success, setSuccess] = useState<string>("");
 
   const { sendRequest, error, isLoading } = useHttp();
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const request = (recaptchaToken?: string) => {
@@ -56,16 +56,15 @@ export default function AuthForm({ isLogin }: Props) {
       );
     }
 
-
-    if (grecaptcha) {
-      grecaptcha.ready(function () {
-        grecaptcha?.execute(G_SITE_KEY, { action: isLogin ? "login" : "register" })
-          .then(function (token: string) {
-            request(token);
-          });
-      });
-    } else {
-      request();
+    try {
+      const token = await grecaptcha?.execute(isLogin ? "login" : "register")
+      if (!token) {
+        console.error("Failed to get reCAPTCHA token. Please try again.");
+        return;
+      }
+      request(token);
+    } catch (error) {
+      console.error("reCAPTCHA execution failed:", error);
     }
   };
 
@@ -83,7 +82,7 @@ export default function AuthForm({ isLogin }: Props) {
 
   return (
     <form
-      className="grid grid-cols-1 gap-4 w-80 mx-auto border border-600 rounded p-6 mt-20 shadow-lg shadow-lg shadow-slate-500/50"
+      className="grid grid-cols-1 gap-4 w-80 mx-auto border border-600 rounded p-6 mt-20 shadow-lg shadow-slate-500/50"
       onSubmit={handleSubmit}
     >
       <FormControl fullWidth>

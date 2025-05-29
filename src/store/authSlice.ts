@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-
+import Cookies from "js-cookie";
 const initialState = {
     accessToken: localStorage.getItem("ACCESS_TOKEN") || "",
 }
@@ -18,6 +18,7 @@ const authSlice = createSlice({
             localStorage.removeItem("ACCESS_TOKEN")
             localStorage.removeItem("sessionToken")
             state.accessToken = ""
+            Cookies.remove("sessionToken")
         },
     }
 })
