@@ -1,5 +1,5 @@
 import { Button, FormControl, TextField } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { BASE_URL, G_SITE_KEY, HREFS } from "../../constants";
 import useHttp from "../../hooks/useHttp";
@@ -59,7 +59,7 @@ export default function AuthForm({ isLogin }: Props) {
 
     if (grecaptcha) {
       grecaptcha.ready(function () {
-        grecaptcha.execute(G_SITE_KEY, { action: 'register' })
+        grecaptcha?.execute(G_SITE_KEY, { action: isLogin ? "login" : "register" })
           .then(function (token: string) {
             request(token);
           });
@@ -68,6 +68,18 @@ export default function AuthForm({ isLogin }: Props) {
       request();
     }
   };
+
+  useEffect(() => {
+    const captchaBadge = document.getElementsByClassName("grecaptcha-badge")[0];
+    if (captchaBadge) {
+      (captchaBadge as HTMLElement).style.visibility = "visible";
+    }
+    return () => {
+      if (captchaBadge) {
+        (captchaBadge as HTMLElement).style.visibility = "hidden";
+      }
+    }
+  }, []);
 
   return (
     <form
