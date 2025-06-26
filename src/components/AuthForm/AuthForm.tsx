@@ -1,7 +1,7 @@
 import { Button, FormControl, TextField } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { BASE_URL, HREFS } from "../../constants";
+import { BASE_URL, G_SITE_KEY_V2, HREFS } from "../../constants";
 import useHttp from "../../hooks/useHttp";
 import { useDispatch } from "react-redux";
 import { authActions } from "../../store/authSlice";
@@ -21,11 +21,11 @@ export default function AuthForm({ isLogin }: Props) {
   const [phone, setPhone] = useState<string>("");
   const [address, setAddress] = useState<string>("");
   const [success, setSuccess] = useState<string>("");
-
+  const recaptchaRef = React.useRef<HTMLDivElement>(null);
   const { sendRequest, error, isLoading } = useHttp();
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
+    console.log({send: recaptchaToken})
     const request = (recaptchaToken?: string) => {
       sendRequest(
         {
@@ -80,6 +80,41 @@ export default function AuthForm({ isLogin }: Props) {
     }
   }, []);
 
+  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
+
+  // Load reCAPTCHA script dynamically
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://www.google.com/recaptcha/api.js';
+    script.async = true;
+    script.defer = true;
+    document.body.appendChild(script);
+
+    // Define the callback function globally for reCAPTCHA
+    (window as any).onRecaptchaSuccess = (token:string) => {
+      setRecaptchaToken(token);
+      console.log('reCAPTCHA token:', token);
+    };
+
+    // Cleanup script on component unmount
+    return () => {
+      // document.body.removeChild(script);
+      // delete (window as any).onRecaptchaSuccess;
+    };
+  }, []);
+  
+  const onKeyDownPassword = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    console.log(event.key);
+    if (event.key === "ArrowDown"){
+      if (recaptchaRef.current) {
+        const checkbox = recaptchaRef.current.querySelector('iframe');
+        if (checkbox) {
+          checkbox.focus();
+          console.log('Focused on reCAPTCHA checkbox');
+        }
+      }
+    }
+  }
   return (
     <form
       className="grid grid-cols-1 gap-4 w-80 mx-auto border border-600 rounded p-6 mt-20 shadow-lg shadow-slate-500/50"
@@ -108,6 +143,7 @@ export default function AuthForm({ isLogin }: Props) {
           onChange={(event) => {
             setPassword(event.target.value);
           }}
+          onKeyDown={onKeyDownPassword}
           className="bg-slate-50 overflow-hidden"
           required
         ></TextField>
@@ -171,6 +207,7 @@ export default function AuthForm({ isLogin }: Props) {
       {error && <p className="text-red-900">{error}</p>}
       {success && <p className="text-green-900">{success}</p>}
       {isLoading && <LoadingSpin paddingBlock="0rem" />}
+      <div ref={recaptchaRef} className="g-recaptcha" data-sitekey={G_SITE_KEY_V2} data-callback="onRecaptchaSuccess"></div>
       <Button variant="contained" type="submit" disabled={isLoading}>
         {isLogin ? "login" : "register"}
       </Button>
