@@ -96,6 +96,8 @@ export default function AuthForm({ isLogin }: Props) {
           }}
           className="bg-slate-50 overflow-hidden pt-20"
           required
+          aria-label="Username"
+          autoComplete="username"
         ></TextField>
       </FormControl>
       <FormControl fullWidth>
@@ -110,6 +112,8 @@ export default function AuthForm({ isLogin }: Props) {
           }}
           className="bg-slate-50 overflow-hidden"
           required
+          aria-label="Password"
+          autoComplete="current-password"
         ></TextField>
       </FormControl>
       {!isLogin && (
