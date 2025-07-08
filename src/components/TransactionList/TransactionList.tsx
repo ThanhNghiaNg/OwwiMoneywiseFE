@@ -75,11 +75,13 @@ export default function TransactionList() {
     
     getTransactionsList(
       {
-        url: `${BASE_URL}/transaction/all?page=${
-          page + 1
-        }&pageSize=${pageSize}`,
+        url: `${BASE_URL}/transaction/all`,
         method: "POST",
-        body: JSON.stringify(filter),
+        body: JSON.stringify({
+          ...filter,
+          page: page + 1,
+          pageSize,
+        }),
       },
       (data) => {
         transactionTableRef.current?.setTotalCount(data.totalCount);
